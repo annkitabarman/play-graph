@@ -80,7 +80,7 @@ model PlaytimeSnapshot {
 
   playtimeMinutes Int
 
-  snapshotDate DateTime
+  snapshotDate DateTime @default(now())
   recordedAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -88,4 +88,5 @@ model PlaytimeSnapshot {
 
   @@unique([userId, gameId, snapshotDate])
   @@index([userId, snapshotDate])
+  @@index([userId, gameId, snapshotDate])
 }

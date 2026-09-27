@@ -10,4 +10,7 @@
  */
 export type * from './models/User.ts'
 export type * from './models/ConnectedAccount.ts'
+export type * from './models/Game.ts'
+export type * from './models/UserGame.ts'
+export type * from './models/PlaytimeSnapshot.ts'
 export type * from './commonInputTypes.ts'

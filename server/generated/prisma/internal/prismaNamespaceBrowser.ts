@@ -52,7 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  ConnectedAccount: 'ConnectedAccount'
+  ConnectedAccount: 'ConnectedAccount',
+  Game: 'Game',
+  UserGame: 'UserGame',
+  PlaytimeSnapshot: 'PlaytimeSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -93,6 +96,44 @@ export const ConnectedAccountScalarFieldEnum = {
 } as const
 
 export type ConnectedAccountScalarFieldEnum = (typeof ConnectedAccountScalarFieldEnum)[keyof typeof ConnectedAccountScalarFieldEnum]
+
+
+export const GameScalarFieldEnum = {
+  id: 'id',
+  platform: 'platform',
+  externalId: 'externalId',
+  name: 'name',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GameScalarFieldEnum = (typeof GameScalarFieldEnum)[keyof typeof GameScalarFieldEnum]
+
+
+export const UserGameScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  gameId: 'gameId',
+  playtimeMinutes: 'playtimeMinutes',
+  lastPlayedAt: 'lastPlayedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserGameScalarFieldEnum = (typeof UserGameScalarFieldEnum)[keyof typeof UserGameScalarFieldEnum]
+
+
+export const PlaytimeSnapshotScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  gameId: 'gameId',
+  playtimeMinutes: 'playtimeMinutes',
+  snapshotDate: 'snapshotDate',
+  recordedAt: 'recordedAt'
+} as const
+
+export type PlaytimeSnapshotScalarFieldEnum = (typeof PlaytimeSnapshotScalarFieldEnum)[keyof typeof PlaytimeSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {

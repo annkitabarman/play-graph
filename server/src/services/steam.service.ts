@@ -18,7 +18,7 @@ export async function getSteamProfile(steamId: string) {
 
 export async function getOwnedGames(steamId: string) {
   const response = await axios.get(
-    `${STEAM_API}/IPlayerService/GetOwnedGames/v2/`,
+    `${STEAM_API}/IPlayerService/GetOwnedGames/v1/`,
     {
       params: {
         key: process.env.STEAM_API_KEY,

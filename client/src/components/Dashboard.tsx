@@ -1,5 +1,67 @@
 import NavBar from "./NavBar";
 import SteamNotConnected from "./SteamNotConnected";
+import { useState, useEffect } from "react";
+import SteamConnectedHome from "./SteamConnectedHome";
+import { BACKEND_URL } from "../assets/constants/urls";
+
+function SteamContent() {
+  const [steamConnected, setSteamConnected] = useState<boolean | null>(null);
+  const [syncing, setSyncing] = useState(false);
+
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/steam/status`, {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to check Steam connection");
+        }
+
+        const data = await response.json();
+        setSteamConnected(data.connected);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    checkConnection();
+  }, []);
+
+  useEffect(() => {
+    if (!steamConnected) return;
+
+    const syncSteam = async () => {
+      try {
+        setSyncing(true);
+        const response = await fetch(`${BACKEND_URL}/steam/sync`, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Failed to sync Steam");
+        const data = await response.json();
+        console.log(data);
+      } catch (err) {
+        console.log("Steam syncing failed", err);
+      } finally {
+        setSyncing(false);
+      }
+    };
+
+    syncSteam();
+  }, [steamConnected]);
+
+  if (steamConnected === null)
+    return <div>Checking your Steam connection...</div>;
+
+  if (!steamConnected) return <SteamNotConnected />;
+
+  if (syncing) {
+    return <div>Syncing your Steam library...</div>;
+  }
+  return <SteamConnectedHome />;
+}
 
 function Dashboard() {
   return (
@@ -27,7 +89,7 @@ function Dashboard() {
         />
       </div>
       <NavBar />
-      <SteamNotConnected />
+      <SteamContent />
     </div>
   );
 }

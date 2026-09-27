@@ -1,11 +1,13 @@
 import "dotenv/config";
-console.log("SESSION_SECRET:", process.env.SESSION_SECRET);
 
 import express from "express";
 import cors from "cors";
 import { clerkMiddleware, getAuth } from "@clerk/express";
 import steamRoutes from "./routes/steam.routes";
 import session from "express-session";
+import { startDailySnapshotJob } from "./jobs/daily-snapshot.job";
+
+startDailySnapshotJob();
 
 const app = express();
 

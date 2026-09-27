@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import axios from "axios";
-import { getSteamProfile } from "../services/steam.service";
+import { getOwnedGames, getSteamProfile } from "../services/steam.service";
 import prisma from "../lib/prisma";
+import { syncSteamAccount } from "../services/steam-sync.service";
 
 const router = Router();
 
@@ -166,6 +167,58 @@ router.get("/status", async (req, res) => {
     console.error("Failed to check Steam status: ", err);
     return res.status(500).json({
       message: "Failed to check Steam connection",
+    });
+  }
+});
+
+router.post("/sync", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "You must be logged in.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+      include: {
+        connectedAccounts: {
+          where: {
+            platform: "steam",
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const steamAccount = user.connectedAccounts[0];
+
+    if (!steamAccount) {
+      return res.status(400).json({
+        message: "Steam account is not connected.",
+      });
+    }
+
+    const result = await syncSteamAccount(user.id, steamAccount.externalId);
+
+    return res.json({
+      message: "Steam synced successfully.",
+      ...result,
+    });
+  } catch (error) {
+    console.error("Steam sync failed:", error);
+
+    return res.status(500).json({
+      message: "Failed to sync Steam.",
     });
   }
 });

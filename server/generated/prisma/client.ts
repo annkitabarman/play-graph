@@ -51,3 +51,18 @@ export type User = Prisma.UserModel
  * 
  */
 export type ConnectedAccount = Prisma.ConnectedAccountModel
+/**
+ * Model Game
+ * 
+ */
+export type Game = Prisma.GameModel
+/**
+ * Model UserGame
+ * 
+ */
+export type UserGame = Prisma.UserGameModel
+/**
+ * Model PlaytimeSnapshot
+ * 
+ */
+export type PlaytimeSnapshot = Prisma.PlaytimeSnapshotModel
