@@ -135,4 +135,39 @@ router.get("/callback", async (req, res) => {
   }
 });
 
+router.get("/status", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        message: "You must be logged in!",
+      });
+    }
+
+    const steamAccount = await prisma.connectedAccount.findFirst({
+      where: {
+        user: {
+          clerkUserId: userId,
+        },
+        platform: "steam",
+      },
+      select: {
+        id: true,
+        externalId: true,
+        username: true,
+        avatarUrl: true,
+      },
+    });
+    return res.json({
+      connected: !!steamAccount,
+      account: steamAccount ?? null,
+    });
+  } catch (err) {
+    console.error("Failed to check Steam status: ", err);
+    return res.status(500).json({
+      message: "Failed to check Steam connection",
+    });
+  }
+});
+
 export default router;
