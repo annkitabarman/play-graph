@@ -1,5 +1,5 @@
 import prisma from "../lib/prisma";
-import { getOwnedGames } from "./steam.service";
+import { getOwnedGames, getSteamGameDetails } from "./steam.service";
 
 export async function syncSteamAccount(userId: string, steamId: string) {
   const steamGames = await getOwnedGames(steamId);
@@ -7,6 +7,13 @@ export async function syncSteamAccount(userId: string, steamId: string) {
   let syncedGames = 0;
 
   for (const steamGame of steamGames) {
+    const details = await getSteamGameDetails(steamGame.appid);
+
+    const genres =
+      details?.genres?.map(
+        (genre: { description: string }) => genre.description,
+      ) ?? [];
+
     const game = await prisma.game.upsert({
       where: {
         platform_externalId: {
@@ -19,6 +26,7 @@ export async function syncSteamAccount(userId: string, steamId: string) {
         imageUrl: steamGame.img_icon_url
           ? `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${steamGame.appid}/${steamGame.img_icon_url}.jpg`
           : null,
+        genres: genres,
       },
       create: {
         platform: "steam",
@@ -27,6 +35,7 @@ export async function syncSteamAccount(userId: string, steamId: string) {
         imageUrl: steamGame.img_icon_url
           ? `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${steamGame.appid}/${steamGame.img_icon_url}.jpg`
           : null,
+        genres: genres,
       },
     });
 

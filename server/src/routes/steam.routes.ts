@@ -38,6 +38,13 @@ router.get("/callback", async (req, res) => {
   try {
     const clerkUserId = req.session.clerkUserId;
 
+    if (!clerkUserId) {
+      return res.status(401).json({
+        message:
+          "PlayGraph session expired. Please try connecting Steam again.",
+      });
+    }
+
     const params = new URLSearchParams();
 
     for (const [key, value] of Object.entries(req.query)) {
@@ -122,11 +129,7 @@ router.get("/callback", async (req, res) => {
 
     console.log("Connected account:", connectedAccount);
 
-    return res.json({
-      message: "Steam connected successfully!",
-      steamId,
-      account: connectedAccount,
-    });
+    return res.redirect("http://localhost:5173");
   } catch (error) {
     console.error("Steam verification failed:", error);
 
@@ -220,6 +223,80 @@ router.post("/sync", async (req, res) => {
     return res.status(500).json({
       message: "Failed to sync Steam.",
     });
+  }
+});
+
+router.get("/dashboard", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+
+    if (!userId)
+      return res.status(401).json({
+        message: "You must be logged n=in.",
+      });
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const games = await prisma.userGame.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        game: true,
+      },
+      orderBy: {
+        playtimeMinutes: "desc",
+      },
+    });
+
+    const totalPlayTimeMinutes = games.reduce(
+      (total, game) => total + game.playtimeMinutes,
+      0,
+    );
+
+    const mostPlayed = games.slice(0, 5);
+
+    const recentlyPlayed = [...games]
+      .filter((game) => game.lastPlayedAt !== null)
+      .sort(
+        (a, b) =>
+          new Date(b.lastPlayedAt!).getTime() -
+          new Date(a.lastPlayedAt!).getTime(),
+      )
+      .slice(0, 5);
+
+    const genrePlaytime: Record<string, number> = {};
+    for (const userGame of games) {
+      for (const genre of userGame.game.genres) {
+        genrePlaytime[genre] =
+          (genrePlaytime[genre] ?? 0) + userGame.playtimeMinutes;
+      }
+    }
+
+    const topGenres = Object.entries(genrePlaytime)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([genre, playtimeMinutes]) => ({
+        genre,
+        playtimeMinutes,
+      }));
+
+    return res.json({
+      total_games: games.length,
+      total_play_time_minutes: totalPlayTimeMinutes,
+      most_played: mostPlayed,
+      recently_played: recentlyPlayed,
+      top_genres: topGenres,
+    });
+  } catch (err) {
+    console.error("Dashboard request failed.", err);
+    return res.status(500).json({ message: "Failed to load dashboard." });
   }
 });
 

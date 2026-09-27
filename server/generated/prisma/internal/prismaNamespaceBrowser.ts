@@ -104,6 +104,7 @@ export const GameScalarFieldEnum = {
   externalId: 'externalId',
   name: 'name',
   imageUrl: 'imageUrl',
+  genres: 'genres',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

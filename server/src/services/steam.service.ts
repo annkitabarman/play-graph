@@ -31,3 +31,16 @@ export async function getOwnedGames(steamId: string) {
 
   return response.data.response.games ?? [];
 }
+
+export async function getSteamGameDetails(appId: number) {
+  const response = await axios.get(
+    "https://store.steampowered.com/api/appdetails",
+    {
+      params: {
+        appids: appId,
+      },
+    },
+  );
+
+  return response.data[appId]?.data ?? null;
+}
