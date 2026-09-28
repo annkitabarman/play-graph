@@ -1,5 +1,6 @@
 import { getCurrentlyPlaying } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
+import { History } from "lucide-react";
 
 export default function CurrentOrLastPlayGame() {
   const { data, isLoading, isError, error } = useQuery({
@@ -29,32 +30,6 @@ export default function CurrentOrLastPlayGame() {
     );
   }
 
-  if (!data?.playing) {
-    return (
-      <div className="relative overflow-hidden rounded-2xl border border-violet-500/20 bg-[#121021] p-5">
-        <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-violet-600/10 blur-3xl" />
-
-        <div className="relative">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-white/30" />
-
-            <span className="text-xs font-medium uppercase tracking-[0.15em] text-white/40">
-              Now Playing
-            </span>
-          </div>
-
-          <h2 className="text-xl font-semibold text-white">
-            Nothing right now
-          </h2>
-
-          <p className="mt-1 text-sm text-white/40">
-            You're not currently playing a game.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const totalMinutes = Math.floor(data.elapsed_seconds / 60);
 
   const hours = Math.floor(totalMinutes / 60);
@@ -73,13 +48,19 @@ export default function CurrentOrLastPlayGame() {
           <div>
             {/* Status */}
             <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-60" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-pink-400" />
-              </span>
+              {data?.playing && (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-60" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-pink-400" />
+                </span>
+              )}
+
+              {!data?.playing && (
+                <History className="h-4 w-4 text-violet-400" />
+              )}
 
               <span className="text-xs font-semibold uppercase tracking-[0.15em] text-pink-300">
-                Currently Playing
+                {data?.playing ? "Currently playing" : "Last played"}
               </span>
             </div>
 
@@ -91,7 +72,7 @@ export default function CurrentOrLastPlayGame() {
             {/* Playing time */}
             <div className="mt-3">
               <p className="text-xs uppercase tracking-wider text-white/35">
-                Playing for
+                {data?.playing ? "Playing" : "Played"} for
               </p>
 
               <p className="mt-1 text-lg font-semibold text-violet-300">
@@ -101,13 +82,15 @@ export default function CurrentOrLastPlayGame() {
           </div>
 
           {/* Footer */}
-          <div className="mt-5 flex items-center gap-2">
-            <span className="rounded-full border border-pink-400/20 bg-pink-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-pink-300">
-              Live
-            </span>
+          {data?.playing && (
+            <div className="mt-5 flex items-center gap-2">
+              <span className="rounded-full border border-pink-400/20 bg-pink-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-pink-300">
+                Live
+              </span>
 
-            <span className="text-xs text-white/30">Steam</span>
-          </div>
+              <span className="text-xs text-white/30">Steam</span>
+            </div>
+          )}
         </div>
 
         {/* RIGHT — Game Image */}

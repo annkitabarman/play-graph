@@ -67,3 +67,18 @@ export async function getCurrentlyPlaying(steamId: string) {
     game_name: player.gameextrainfo,
   };
 }
+
+export async function getRecentlyPlayedGames(steamId: string) {
+  const response = await axios.get(
+    `${STEAM_API}/IPlayerService/GetRecentlyPlayedGames/v1/`,
+    {
+      params: {
+        key: process.env.STEAM_API_KEY,
+        steamid: steamId,
+        count: 4,
+      },
+    },
+  );
+
+  return response.data.response.games ?? [];
+}

@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import axios from "axios";
-import { getSteamProfile } from "../services/steam.service";
+import {
+  getRecentlyPlayedGames,
+  getSteamProfile,
+} from "../services/steam.service";
 import prisma from "../lib/prisma";
 import { syncSteamAccount } from "../services/steam-sync.service";
 import { updateCurrentlyPlaying } from "../services/currently-playing.service";
@@ -370,7 +373,10 @@ router.get("/currently-playing", async (req, res) => {
     );
 
     if (!session) {
-      return res.json({ playing: false });
+      return res.json({
+        playing: false,
+        game: null,
+      });
     }
 
     const elapsedSeconds = Math.floor(
@@ -378,13 +384,15 @@ router.get("/currently-playing", async (req, res) => {
     );
 
     return res.json({
-      playing: true,
+      playing: session.playing,
       game: {
         app_id: session.app_id,
         game_name: session.game_name,
         image_url: `https://cdn.cloudflare.steamstatic.com/steam/apps/${session.app_id}/header.jpg`,
       },
-      elapsed_seconds: elapsedSeconds,
+      elapsed_seconds: session.playing
+        ? elapsedSeconds
+        : session.session_duration,
     });
   } catch (err) {
     console.error("Failed to get currently playing game:", err);
@@ -395,4 +403,43 @@ router.get("/currently-playing", async (req, res) => {
   }
 });
 
+router.get("/recently-played", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({ message: "You need to be logged in." });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+      include: {
+        connectedAccounts: {
+          where: {
+            platform: "steam",
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const steamAccount = user.connectedAccounts[0];
+    const games = await getRecentlyPlayedGames(steamAccount.externalId);
+
+    return res.json({
+      games: games,
+    });
+  } catch (err) {
+    console.error("Failed to get recently played games.", err);
+    return res
+      .status(500)
+      .json({ message: "Failed to get recently played games." });
+  }
+});
 export default router;

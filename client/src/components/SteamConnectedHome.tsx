@@ -1,15 +1,31 @@
-import { getSteamDashBoard, syncSteam } from "../apis/steam.api";
+import {
+  getSteamDashBoard,
+  syncSteam,
+  getRecentlyPlayedGames,
+} from "../apis/steam.api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import CurrentOrLastPlayGame from "./CurrentOrLastPlayedGame";
 import StatsCard from "./StatsCard";
 import PlaytimePieChart from "../charts/PlaytimePieChart";
 import GenreBarChart from "../charts/GenreBarChart";
+import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
 
 export default function SteamConnectedHome() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "dashboard"],
     queryFn: getSteamDashBoard,
   });
+
+  const {
+    data: recentlyPlayed,
+    isLoading: recentlyPlayedLoading,
+    isError: recentlyPlayedError,
+  } = useQuery({
+    queryKey: ["steam", "recently-played"],
+    queryFn: getRecentlyPlayedGames,
+  });
+
+  console.log(recentlyPlayed, recentlyPlayedLoading, recentlyPlayedError);
   const queryClient = useQueryClient();
 
   const syncMutation = useMutation({
@@ -49,21 +65,31 @@ export default function SteamConnectedHome() {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-5 lg:grid-cols-3 items-start">
+        <div className="grid gap-1 grid-cols-3 items-start">
           {/* Left side - cards */}
-          <div className="grid gap-5 md:grid-cols-2 lg:col-span-2">
+          <div className="grid gap-5 grid-cols-3 lg:col-span-3">
             <StatsCard
               header="Games"
               value={data.total_games}
-              icon="🎮"
+              icon={Gamepad2}
               note="games in your library"
             />
 
             <StatsCard
               header="Total Playtime"
               value={`${(data.total_play_time_minutes / 60).toFixed(1)}h`}
-              icon="⏱"
+              icon={Clock3}
               note={`${data.total_play_time_minutes.toLocaleString()} minutes played`}
+            />
+            <StatsCard
+              header="Average per Game"
+              value={`${(
+                data.total_play_time_minutes /
+                data.total_games /
+                60
+              ).toFixed(1)}h`}
+              icon={ChartNoAxesColumn}
+              note={`${Math.floor(data.total_play_time_minutes / data.total_games)} minutes per game`}
             />
           </div>
         </div>
@@ -91,48 +117,6 @@ export default function SteamConnectedHome() {
                 data={data.playtime_distribution}
                 totalGames={data.total_games}
               />
-            </div>
-          </div>
-        </div>
-
-        {/* Activity section */}
-        <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold">Gaming Overview</h2>
-
-            <p className="mt-1 text-sm text-zinc-500">
-              Your Steam activity at a glance
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div>
-              <p className="text-sm text-zinc-500">Games</p>
-
-              <p className="mt-1 text-2xl font-semibold">{data.total_games}</p>
-            </div>
-
-            <div>
-              <p className="text-sm text-zinc-500">Playtime</p>
-
-              <p className="mt-1 text-2xl font-semibold">
-                {(data.total_play_time_minutes / 60).toFixed(1)}h
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-zinc-500">Average per game</p>
-
-              <p className="mt-1 text-2xl font-semibold">
-                {data.total_games > 0
-                  ? (
-                      data.total_play_time_minutes /
-                      data.total_games /
-                      60
-                    ).toFixed(1)
-                  : "0"}
-                h
-              </p>
             </div>
           </div>
         </div>

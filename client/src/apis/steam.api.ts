@@ -33,3 +33,13 @@ export async function getCurrentlyPlaying() {
 
   return response.json();
 }
+
+export async function getRecentlyPlayedGames() {
+  const response = await fetch(`${BACKEND_URL}/steam/recently-played`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) throw new Error("Failed to get recently played games.");
+
+  return response.json();
+}

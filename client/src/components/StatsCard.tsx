@@ -1,14 +1,16 @@
+import type { LucideIcon } from "lucide-react";
+
 interface StatsCardProps {
   header: string;
   value: string | number;
-  icon: string;
+  icon: LucideIcon;
   note: string;
 }
 
 export default function StatsCard({
   header,
   value,
-  icon,
+  icon: Icon,
   note,
 }: StatsCardProps) {
   return (
@@ -20,9 +22,7 @@ export default function StatsCard({
       <div className="flex items-center justify-between">
         <p className="text-base font-medium text-violet-300">{header}</p>
 
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/5">
-          <span className="text-lg">{icon}</span>
-        </div>
+        <Icon className="h-5 w-5 text-violet-400" />
       </div>
 
       {/* Value */}
