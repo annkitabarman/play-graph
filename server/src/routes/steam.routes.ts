@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import axios from "axios";
-import { getOwnedGames, getSteamProfile } from "../services/steam.service";
+import { getSteamProfile } from "../services/steam.service";
 import prisma from "../lib/prisma";
 import { syncSteamAccount } from "../services/steam-sync.service";
+import { updateCurrentlyPlaying } from "../services/currently-playing.service";
 
 const router = Router();
 
@@ -103,7 +104,6 @@ router.get("/callback", async (req, res) => {
     });
 
     const profile = await getSteamProfile(steamId);
-    console.log(profile);
 
     const connectedAccount = await prisma.connectedAccount.upsert({
       where: {
@@ -126,8 +126,6 @@ router.get("/callback", async (req, res) => {
         avatarUrl: profile?.avatarfull,
       },
     });
-
-    console.log("Connected account:", connectedAccount);
 
     return res.redirect("http://localhost:5173");
   } catch (error) {
@@ -271,6 +269,33 @@ router.get("/dashboard", async (req, res) => {
       )
       .slice(0, 5);
 
+    const playtimeDistribution = {
+      unplayed: 0,
+      under1Hour: 0,
+      oneToFiveHours: 0,
+      fiveToTwentyHours: 0,
+      twentyToFiftyHours: 0,
+      overFiftyHours: 0,
+    };
+
+    for (const userGame of games) {
+      const hours = userGame.playtimeMinutes / 60;
+
+      if (hours === 0) {
+        playtimeDistribution.unplayed++;
+      } else if (hours < 1) {
+        playtimeDistribution.under1Hour++;
+      } else if (hours < 5) {
+        playtimeDistribution.oneToFiveHours++;
+      } else if (hours < 20) {
+        playtimeDistribution.fiveToTwentyHours++;
+      } else if (hours < 50) {
+        playtimeDistribution.twentyToFiftyHours++;
+      } else {
+        playtimeDistribution.overFiftyHours++;
+      }
+    }
+
     const genrePlaytime: Record<string, number> = {};
     for (const userGame of games) {
       for (const genre of userGame.game.genres) {
@@ -293,10 +318,80 @@ router.get("/dashboard", async (req, res) => {
       most_played: mostPlayed,
       recently_played: recentlyPlayed,
       top_genres: topGenres,
+      playtime_distribution: [
+        { bucket: "Unplayed", count: playtimeDistribution.unplayed },
+        { bucket: "< 1 hour", count: playtimeDistribution.under1Hour },
+        { bucket: "1-5 hours", count: playtimeDistribution.oneToFiveHours },
+        { bucket: "5-20 hours", count: playtimeDistribution.fiveToTwentyHours },
+        {
+          bucket: "20-50 hours",
+          count: playtimeDistribution.twentyToFiftyHours,
+        },
+        { bucket: "50+ hours", count: playtimeDistribution.overFiftyHours },
+      ],
     });
   } catch (err) {
     console.error("Dashboard request failed.", err);
     return res.status(500).json({ message: "Failed to load dashboard." });
+  }
+});
+
+router.get("/currently-playing", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+
+    if (!userId) {
+      return res.status(401).json({ message: "You need to be logged in." });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+      include: {
+        connectedAccounts: {
+          where: {
+            platform: "steam",
+          },
+        },
+      },
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const steamAccount = user.connectedAccounts[0];
+
+    if (!steamAccount)
+      return res.status(400).json({ message: "Steam account not connected." });
+
+    const session = await updateCurrentlyPlaying(
+      userId,
+      steamAccount.externalId,
+    );
+
+    if (!session) {
+      return res.json({ playing: false });
+    }
+
+    const elapsedSeconds = Math.floor(
+      (Date.now() - new Date(session.detected_at).getTime()) / 1000,
+    );
+
+    return res.json({
+      playing: true,
+      game: {
+        app_id: session.app_id,
+        game_name: session.game_name,
+        image_url: `https://cdn.cloudflare.steamstatic.com/steam/apps/${session.app_id}/header.jpg`,
+      },
+      elapsed_seconds: elapsedSeconds,
+    });
+  } catch (err) {
+    console.error("Failed to get currently playing game:", err);
+
+    return res.status(500).json({
+      message: "Failed to get currently playing game.",
+    });
   }
 });
 

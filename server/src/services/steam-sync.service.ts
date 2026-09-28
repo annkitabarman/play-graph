@@ -23,18 +23,14 @@ export async function syncSteamAccount(userId: string, steamId: string) {
       },
       update: {
         name: steamGame.name,
-        imageUrl: steamGame.img_icon_url
-          ? `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${steamGame.appid}/${steamGame.img_icon_url}.jpg`
-          : null,
+        imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.appid}/header.jpg`,
         genres: genres,
       },
       create: {
         platform: "steam",
         externalId: String(steamGame.appid),
         name: steamGame.name,
-        imageUrl: steamGame.img_icon_url
-          ? `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${steamGame.appid}/${steamGame.img_icon_url}.jpg`
-          : null,
+        imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.appid}/header.jpg`,
         genres: genres,
       },
     });
@@ -62,6 +58,6 @@ export async function syncSteamAccount(userId: string, steamId: string) {
   }
 
   return {
-    gamesSynced: syncedGames,
+    games_synced: syncedGames,
   };
 }

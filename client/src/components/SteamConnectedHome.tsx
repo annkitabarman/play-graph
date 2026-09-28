@@ -1,5 +1,9 @@
 import { getSteamDashBoard, syncSteam } from "../apis/steam.api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import CurrentOrLastPlayGame from "./CurrentOrLastPlayedGame";
+import StatsCard from "./StatsCard";
+import PlaytimePieChart from "../charts/PlaytimePieChart";
+import GenreBarChart from "../charts/GenreBarChart";
 
 export default function SteamConnectedHome() {
   const { data, isLoading, isError, error } = useQuery({
@@ -32,13 +36,6 @@ export default function SteamConnectedHome() {
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-10">
-          <p className="mb-2 text-sm font-medium text-violet-400">PLAYGRAPH</p>
-
-          <h1 className="text-4xl font-bold tracking-tight">
-            Your Gaming Activity
-          </h1>
-
-          <p className="mt-2 text-zinc-400">A snapshot of your gaming life.</p>
           <button
             onClick={() => syncMutation.mutate()}
             disabled={syncMutation.isPending}
@@ -47,57 +44,54 @@ export default function SteamConnectedHome() {
             {syncMutation.isPending ? "Syncing..." : "Sync Steam"}
           </button>
         </div>
+        <div className="my-5">
+          <CurrentOrLastPlayGame />
+        </div>
 
         {/* Stats */}
-        <div className="grid gap-5 md:grid-cols-2">
-          {/* Total Games */}
-          <div className="relative overflow-hidden rounded-[20px] border border-violet-500/30 bg-[#171238] px-5 py-5 shadow-[0_10px_40px_rgba(0,0,0,0.25)]">
-            {/* Neon top border */}
-            <div className="absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r from-cyan-400 to-violet-500" />
+        <div className="grid gap-5 lg:grid-cols-3 items-start">
+          {/* Left side - cards */}
+          <div className="grid gap-5 md:grid-cols-2 lg:col-span-2">
+            <StatsCard
+              header="Games"
+              value={data.total_games}
+              icon="🎮"
+              note="games in your library"
+            />
 
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <p className="text-base font-medium text-violet-300">Games</p>
+            <StatsCard
+              header="Total Playtime"
+              value={`${(data.total_play_time_minutes / 60).toFixed(1)}h`}
+              icon="⏱"
+              note={`${data.total_play_time_minutes.toLocaleString()} minutes played`}
+            />
+          </div>
+        </div>
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/5">
-                <span className="text-lg">🎮</span>
-              </div>
+        <div className="my-5 flex w-full items-stretch gap-5">
+          {/* Genre chart */}
+          <div className="min-w-0 flex-1">
+            <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
+              <h3 className="mb-2 text-sm font-semibold tracking-wider text-violet-200">
+                Genres played
+              </h3>
+
+              <GenreBarChart data={data.top_genres} />
             </div>
-
-            {/* Value */}
-            <p className="mt-5 text-4xl font-bold tracking-tight text-white">
-              {data.total_games}
-            </p>
-
-            <p className="mt-1 text-sm text-violet-300">
-              games in your library
-            </p>
           </div>
 
-          {/* Total Playtime */}
-          <div className="relative overflow-hidden rounded-[20px] border border-violet-500/30 bg-[#171238] px-5 py-5 shadow-[0_10px_40px_rgba(0,0,0,0.25)]">
-            {/* Neon top border */}
-            <div className="absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r from-pink-500 to-fuchsia-400" />
+          {/* Playtime chart */}
+          <div className="w-[240px] shrink-0">
+            <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
+              <h3 className="mb-2 text-sm font-semibold tracking-wider text-violet-200">
+                Playtime Distribution
+              </h3>
 
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <p className="text-base font-medium text-violet-300">
-                Total playtime
-              </p>
-
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-pink-500/20 bg-pink-500/5">
-                <span className="text-lg">⏱</span>
-              </div>
+              <PlaytimePieChart
+                data={data.playtime_distribution}
+                totalGames={data.total_games}
+              />
             </div>
-
-            {/* Value */}
-            <p className="mt-5 text-4xl font-bold tracking-tight text-white">
-              {(data.total_play_time_minutes / 60).toFixed(1)}h
-            </p>
-
-            <p className="mt-1 text-sm text-violet-300">
-              {data.total_play_time_minutes.toLocaleString()} minutes played
-            </p>
           </div>
         </div>
 

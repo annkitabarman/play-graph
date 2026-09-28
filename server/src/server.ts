@@ -6,6 +6,7 @@ import { clerkMiddleware, getAuth } from "@clerk/express";
 import steamRoutes from "./routes/steam.routes";
 import session from "express-session";
 import { startDailySnapshotJob } from "./jobs/daily-snapshot.job";
+import redis, { connectRedis } from "./lib/redis";
 
 startDailySnapshotJob();
 
@@ -46,7 +47,19 @@ app.get("/api/me", (req, res) => {
 });
 
 app.use("/api/steam", steamRoutes);
+async function startServer() {
+  try {
+    await connectRedis();
 
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
-});
+    console.log("Redis connected");
+
+    app.listen(5000, () => {
+      console.log(`Server running on port 5000`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();

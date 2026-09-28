@@ -23,3 +23,13 @@ export async function syncSteam() {
 
   return response.json();
 }
+
+export async function getCurrentlyPlaying() {
+  const response = await fetch(`${BACKEND_URL}/steam/currently-playing`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) throw new Error("Failed to get currently playing game.");
+
+  return response.json();
+}

@@ -44,3 +44,26 @@ export async function getSteamGameDetails(appId: number) {
 
   return response.data[appId]?.data ?? null;
 }
+
+export async function getCurrentlyPlaying(steamId: string) {
+  const response = await axios.get(
+    `${STEAM_API}/ISteamUser/GetPlayerSummaries/v2`,
+    {
+      params: {
+        key: process.env.STEAM_API_KEY,
+        steamIds: steamId,
+      },
+    },
+  );
+
+  const player = response.data.response.players?.[0];
+
+  if (!player?.gameid) {
+    return null;
+  }
+
+  return {
+    app_id: Number(player.gameid),
+    game_name: player.gameextrainfo,
+  };
+}
