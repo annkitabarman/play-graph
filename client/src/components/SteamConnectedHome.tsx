@@ -9,6 +9,7 @@ import StatsCard from "./StatsCard";
 import PlaytimePieChart from "../charts/PlaytimePieChart";
 import GenreBarChart from "../charts/GenreBarChart";
 import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
+// import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
 
 export default function SteamConnectedHome() {
   const { data, isLoading, isError, error } = useQuery({
@@ -51,7 +52,7 @@ export default function SteamConnectedHome() {
     <div className="min-h-screen px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-10">
+        {/* <div className="mb-10">
           <button
             onClick={() => syncMutation.mutate()}
             disabled={syncMutation.isPending}
@@ -59,8 +60,8 @@ export default function SteamConnectedHome() {
           >
             {syncMutation.isPending ? "Syncing..." : "Sync Steam"}
           </button>
-        </div>
-        <div className="my-5">
+        </div> */}
+        <div className="mb-5">
           <CurrentOrLastPlayGame />
         </div>
 
@@ -120,6 +121,8 @@ export default function SteamConnectedHome() {
             </div>
           </div>
         </div>
+
+        {/* <DailyPlayTimeChart /> */}
       </div>
     </div>
   );

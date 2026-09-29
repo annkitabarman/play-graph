@@ -442,4 +442,95 @@ router.get("/recently-played", async (req, res) => {
       .json({ message: "Failed to get recently played games." });
   }
 });
+
+router.get("/daily-play-time", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "You must be logged in.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - 6);
+
+    const snapshots = await prisma.playtimeSnapshot.findMany({
+      where: {
+        userId: user.id,
+        snapshotDate: {
+          gte: startDate,
+        },
+      },
+
+      orderBy: {
+        snapshotDate: "asc",
+      },
+    });
+
+    const days = [];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+
+      const nextDate = new Date(date);
+      nextDate.setDate(date.getDate() + 1);
+
+      const daySnapshots = snapshots.filter(
+        (snap) => snap.snapshotDate >= date && snap.snapshotDate < nextDate,
+      );
+
+      let minutes = 0;
+
+      for (const snap of daySnapshots) {
+        const prev = await prisma.playtimeSnapshot.findFirst({
+          where: {
+            userId: user.id,
+            gameId: snap.gameId,
+            snapshotDate: {
+              lt: date,
+            },
+          },
+          orderBy: {
+            snapshotDate: "desc",
+          },
+        });
+
+        if (!prev) continue;
+
+        minutes += Math.max(0, snap.playtimeMinutes - prev.playtimeMinutes);
+      }
+
+      days.push({
+        date: date.toISOString().split("T")[0],
+        minutes,
+      });
+    }
+
+    return res.json({
+      days,
+    });
+  } catch (err) {
+    console.error("Failed to fetch daily played time:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch daily played time.",
+    });
+  }
+});
 export default router;

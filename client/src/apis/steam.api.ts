@@ -43,3 +43,12 @@ export async function getRecentlyPlayedGames() {
 
   return response.json();
 }
+
+export async function getDailyPlayTime() {
+  const response = await fetch(`${BACKEND_URL}/steam/daily-play-time`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) throw new Error("Failed to get daily play time.");
+  return response.json();
+}

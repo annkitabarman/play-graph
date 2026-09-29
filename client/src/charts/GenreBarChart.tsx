@@ -26,7 +26,7 @@ export default function GenreBarChart({ data }: GenreBarChartProps) {
       top: 25,
       right: 20,
       bottom: 65,
-      left: 45,
+      left: 20,
     };
 
     svg
@@ -36,33 +36,87 @@ export default function GenreBarChart({ data }: GenreBarChartProps) {
 
     const container = svg.append("g");
 
-    // X axis - genres
+    // X scale
     const x = d3
       .scaleBand<string>()
       .domain(data.map((d) => d.genre))
       .range([margin.left, width - margin.right])
       .padding(0.3);
 
-    // Y axis - playtime
+    // Y scale
     const maxPlaytime = d3.max(data, (d) => d.playtimeMinutes) ?? 0;
+
+    const chartPadding = 12;
 
     const y = d3
       .scaleLinear()
       .domain([0, maxPlaytime])
       .nice()
-      .range([height - margin.bottom, margin.top]);
+      .range([
+        height - margin.bottom - chartPadding,
+        margin.top + chartPadding,
+      ]);
+
+    // Chart border
+    container
+      .append("rect")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("width", width - margin.left - margin.right)
+      .attr("height", height - margin.top - margin.bottom)
+      .attr("fill", "none")
+      .attr("stroke", "#3a3655")
+      .attr("stroke-width", 1)
+      .attr("rx", 4);
+
+    // Horizontal grid lines
+    const yGrid = d3
+      .axisLeft(y)
+      .ticks(4)
+      .tickSize(-(width - margin.left - margin.right))
+      .tickFormat(() => "");
+
+    container
+      .append("g")
+      .attr("transform", `translate(${margin.left}, 0)`)
+      .call(yGrid)
+      .call((g) => {
+        g.select(".domain").remove();
+
+        g.selectAll(".tick line")
+          .attr("stroke", "#2a2748")
+          .attr("stroke-dasharray", "2 3");
+      });
+
+    const defs = svg.append("defs");
+
+    const gradient = defs
+      .append("linearGradient")
+      .attr("id", "genre-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
+
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#8b5cf6");
+
+    gradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#ec4899");
 
     // Bars
     container
-      .selectAll("rect")
+      .selectAll(".bar")
       .data(data)
       .join("rect")
+      .attr("class", "bar")
       .attr("x", (d) => x(d.genre)!)
       .attr("y", (d) => y(d.playtimeMinutes))
       .attr("width", x.bandwidth())
       .attr("height", (d) => y(0) - y(d.playtimeMinutes))
       .attr("rx", 6)
-      .attr("fill", "#8b5cf6")
+      .attr("fill", "url(#genre-gradient)")
       .style("transition", "opacity 0.2s")
       .on("mouseenter", function () {
         d3.select(this).style("opacity", 0.8);
@@ -119,18 +173,47 @@ export default function GenreBarChart({ data }: GenreBarChartProps) {
       });
 
     // Hours above bars
-    container
+    const hoursLabels = container
       .selectAll(".hours-label")
       .data(data)
-      .join("text")
+      .join("g")
       .attr("class", "hours-label")
-      .attr("x", (d) => x(d.genre)! + x.bandwidth() / 2)
-      .attr("y", (d) => y(d.playtimeMinutes) - 8)
+      .attr(
+        "transform",
+        (d) =>
+          `translate(${x(d.genre)! + x.bandwidth() / 2}, ${
+            y(d.playtimeMinutes) - 8
+          })`,
+      );
+
+    hoursLabels
+      .append("text")
       .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
       .attr("fill", "#ffffff")
       .attr("font-size", "11px")
       .attr("font-weight", "600")
       .text((d) => `${(d.playtimeMinutes / 60).toFixed(1)}h`);
+
+    hoursLabels.each(function () {
+      const group = d3.select(this);
+      const text = group.select("text").node() as SVGTextElement | null;
+
+      if (!text) return;
+
+      const bbox = text.getBBox();
+
+      group
+        .insert("rect", "text")
+        .attr("x", bbox.x - 6)
+        .attr("y", bbox.y - 3)
+        .attr("width", bbox.width + 12)
+        .attr("height", bbox.height + 6)
+        .attr("rx", 6)
+        .attr("fill", "#171238")
+        .attr("stroke", "#3a3655")
+        .attr("stroke-width", 1);
+    });
   }, [data]);
 
   return (
