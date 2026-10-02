@@ -1,7 +1,7 @@
 import { getCurrentlyPlaying } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
 import { History } from "lucide-react";
-
+import { STEAM_URL } from "../constants/urls";
 export default function CurrentOrLastPlayGame() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "currently-playing"],
@@ -65,9 +65,27 @@ export default function CurrentOrLastPlayGame() {
             </div>
 
             {/* Game name */}
-            <h2 className="mt-5 text-2xl font-bold tracking-tight text-white">
-              {data.game.game_name}
-            </h2>
+            <div className="group/game relative mt-5 w-fit">
+              <a
+                href={`${STEAM_URL}/${data.game.app_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-2xl font-bold tracking-tight text-white transition hover:text-cyan-300"
+              >
+                {data.game.game_name}
+              </a>
+
+              {/* Tooltip */}
+              <div
+                className="pointer-events-none absolute left-0 top-full z-50 mt-2
+               whitespace-nowrap rounded-lg border border-violet-500/20
+               bg-[#171322] px-3 py-1.5 text-xs text-violet-200
+               opacity-0 shadow-xl transition-opacity duration-200
+               group-hover/game:opacity-100"
+              >
+                Go to Steam page
+              </div>
+            </div>
 
             {/* Playing time */}
             <div className="mt-3">

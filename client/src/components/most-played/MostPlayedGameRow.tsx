@@ -1,4 +1,5 @@
 import type { MostPlayedGame } from "../../types/steam.types";
+import { STEAM_URL } from "../../constants/urls";
 
 interface Props {
   game: MostPlayedGame;
@@ -32,7 +33,27 @@ export default function MostPlayedGameRow({ game, rank }: Props) {
 
         {/* Game info */}
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-white">{game.name}</p>
+          <div className="group/game relative w-fit max-w-full">
+            <a
+              href={`${STEAM_URL}/${game.external_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block truncate text-sm font-bold text-white transition hover:text-cyan-300"
+            >
+              {game.name}
+            </a>
+
+            {/* Tooltip */}
+            <div
+              className="pointer-events-none absolute left-0 top-full z-50 mt-2
+                 whitespace-nowrap rounded-lg border border-violet-500/20
+                 bg-[#171322] px-3 py-1.5 text-xs text-violet-200
+                 opacity-0 shadow-xl transition-opacity duration-200
+                 group-hover/game:opacity-100"
+            >
+              Go to Steam page
+            </div>
+          </div>
 
           <p className="mt-1 text-xs text-violet-300">
             {formatHours(game.playtime_2weeks)} last 2 weeks

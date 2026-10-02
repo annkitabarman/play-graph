@@ -457,6 +457,7 @@ router.get("/most-played", async (req, res) => {
         image_url: userGame.game.imageUrl,
         playtime_minutes: userGame.playtimeMinutes,
         playtime_2weeks: userGame.playtimeMinutes2Weeks,
+        external_id: userGame.game.externalId,
       })),
       total_count: games.length,
     });

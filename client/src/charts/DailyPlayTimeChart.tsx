@@ -214,6 +214,9 @@ export default function DailyPlayTimeChart() {
   return (
     <div className="w-full">
       <svg ref={svgRef} className="h-auto w-full" viewBox="0 0 700 300" />
+      <p className="mt-1 text-center text-sm font-medium tracking-wide text-violet-400">
+        Minutes per day
+      </p>
     </div>
   );
 }
