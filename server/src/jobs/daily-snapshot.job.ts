@@ -1,14 +1,33 @@
 import cron from "node-cron";
+import crypto from "crypto";
+import { formatInTimeZone } from "date-fns-tz";
+
 import prisma from "../lib/prisma";
+import redis from "../lib/redis";
+
 import { syncSteamAccount } from "../services/steam-sync.service";
 import { createDailySnapshots } from "../services/daily-snapshot.service";
 
 export function startDailySnapshotJob() {
   console.log("Daily snapshot job registered");
-  cron.schedule(
-    "59 23 * * *",
-    async () => {
-      console.log("Running daily Steam snapshot job...");
+
+  cron.schedule("* * * * *", async () => {
+    const lockKey = "jobs:daily-snapshot";
+    const lockValue = crypto.randomUUID();
+
+    // Try to acquire the lock
+    const acquired = await redis.set(lockKey, lockValue, {
+      NX: true,
+      EX: 120,
+    });
+
+    if (!acquired) {
+      console.log("Daily snapshot job already running. Skipping.");
+      return;
+    }
+
+    try {
+      const now = new Date();
 
       const users = await prisma.user.findMany({
         include: {
@@ -27,11 +46,15 @@ export function startDailySnapshotJob() {
           continue;
         }
 
+        const localTime = formatInTimeZone(now, user.timezone, "HH:mm");
+
+        if (localTime !== "23:59") {
+          continue;
+        }
+
         try {
-          // Get the latest Steam data first
           await syncSteamAccount(user.id, steamAccount.externalId);
 
-          // Then record the end-of-day state
           await createDailySnapshots(user.id);
 
           console.log(`Daily snapshot created for user ${user.id}`);
@@ -39,9 +62,21 @@ export function startDailySnapshotJob() {
           console.error(`Daily snapshot failed for user ${user.id}:`, error);
         }
       }
-    },
-    {
-      timezone: "Asia/Kolkata",
-    },
-  );
+    } finally {
+      // Release only OUR lock
+      await redis.eval(
+        `
+          if redis.call("get", KEYS[1]) == ARGV[1] then
+            return redis.call("del", KEYS[1])
+          else
+            return 0
+          end
+        `,
+        {
+          keys: [lockKey],
+          arguments: [lockValue],
+        },
+      );
+    }
+  });
 }

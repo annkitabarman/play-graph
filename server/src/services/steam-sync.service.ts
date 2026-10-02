@@ -1,8 +1,34 @@
 import prisma from "../lib/prisma";
-import { getOwnedGames, getSteamGameDetails } from "./steam.service";
+import {
+  getOwnedGames,
+  getSteamGameDetails,
+  getRecentlyPlayedGames,
+} from "./steam.service";
 
 export async function syncSteamAccount(userId: string, steamId: string) {
-  const steamGames = await getOwnedGames(steamId);
+  const ownedGames = await getOwnedGames(steamId);
+  const recentlyPlayedGames = await getRecentlyPlayedGames(steamId);
+
+  // Merge games by Steam AppID
+  const gamesMap = new Map<number, (typeof ownedGames)[number]>();
+
+  // Add owned games first
+  for (const game of ownedGames) {
+    gamesMap.set(game.appid, game);
+  }
+
+  // Add recently played games that aren't already in owned games
+  for (const game of recentlyPlayedGames.games) {
+    if (!gamesMap.has(game.appid)) {
+      gamesMap.set(game.appid, game);
+    }
+  }
+
+  const steamGames = [...gamesMap.values()];
+
+  console.log(
+    `Syncing ${steamGames.length} games (${ownedGames.length} owned, ${recentlyPlayedGames.total_count} recently played)`,
+  );
 
   let syncedGames = 0;
 
@@ -24,14 +50,14 @@ export async function syncSteamAccount(userId: string, steamId: string) {
       update: {
         name: steamGame.name,
         imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.appid}/header.jpg`,
-        genres: genres,
+        genres,
       },
       create: {
         platform: "steam",
         externalId: String(steamGame.appid),
         name: steamGame.name,
         imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.appid}/header.jpg`,
-        genres: genres,
+        genres,
       },
     });
 

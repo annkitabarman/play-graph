@@ -279,8 +279,6 @@ router.get("/dashboard", async (req, res) => {
       0,
     );
 
-    const mostPlayed = games.slice(0, 5);
-
     const recentlyPlayed = [...games]
       .filter((game) => game.lastPlayedAt !== null)
       .sort(
@@ -336,7 +334,6 @@ router.get("/dashboard", async (req, res) => {
     return res.json({
       total_games: games.length,
       total_play_time_minutes: totalPlayTimeMinutes,
-      most_played: mostPlayed,
       recently_played: recentlyPlayed,
       top_genres: topGenres,
       playtime_distribution: [
@@ -448,10 +445,11 @@ router.get("/recently-played", async (req, res) => {
     }
 
     const steamAccount = user.connectedAccounts[0];
-    const games = await getRecentlyPlayedGames(steamAccount.externalId);
+    const response = await getRecentlyPlayedGames(steamAccount.externalId);
 
     return res.json({
-      games: games,
+      total_count: response.total_count,
+      games: response.games,
     });
   } catch (err) {
     console.error("Failed to get recently played games.", err);

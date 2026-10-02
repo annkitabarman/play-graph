@@ -1,9 +1,23 @@
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+
 import prisma from "../lib/prisma";
 
 export async function createDailySnapshots(userId: string) {
-  const today = new Date();
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
 
-  today.setHours(0, 0, 0, 0);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Get the user's current calendar date
+  const localDate = formatInTimeZone(new Date(), user.timezone, "yyyy-MM-dd");
+
+  // Convert that user's midnight into a UTC Date
+  const snapshotDate = fromZonedTime(`${localDate}T00:00:00`, user.timezone);
 
   const games = await prisma.userGame.findMany({
     where: {
@@ -17,18 +31,20 @@ export async function createDailySnapshots(userId: string) {
         userId_gameId_snapshotDate: {
           userId,
           gameId: userGame.gameId,
-          snapshotDate: today,
+          snapshotDate,
         },
       },
+
       update: {
         playtimeMinutes: userGame.playtimeMinutes,
         recordedAt: new Date(),
       },
+
       create: {
         userId,
         gameId: userGame.gameId,
         playtimeMinutes: userGame.playtimeMinutes,
-        snapshotDate: today,
+        snapshotDate,
         recordedAt: new Date(),
       },
     });

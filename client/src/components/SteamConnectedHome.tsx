@@ -12,16 +12,6 @@ export default function SteamConnectedHome() {
     queryFn: getSteamDashBoard,
   });
 
-  // const {
-  //   data: recentlyPlayed,
-  //   isLoading: recentlyPlayedLoading,
-  //   isError: recentlyPlayedError,
-  // } = useQuery({
-  //   queryKey: ["steam", "recently-played"],
-  //   queryFn: getRecentlyPlayedGames,
-  // });
-
-  // console.log(recentlyPlayed, recentlyPlayedLoading, recentlyPlayedError);
   const queryClient = useQueryClient();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

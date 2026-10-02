@@ -75,10 +75,10 @@ export async function getRecentlyPlayedGames(steamId: string) {
       params: {
         key: process.env.STEAM_API_KEY,
         steamid: steamId,
-        count: 4,
+        count: 10,
       },
     },
   );
 
-  return response.data.response.games ?? [];
+  return response.data.response ?? {};
 }
