@@ -123,7 +123,7 @@ export default function PlaytimePieChart({
           const color = colors[index % colors.length];
 
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" key={item.bucket}>
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: color }}

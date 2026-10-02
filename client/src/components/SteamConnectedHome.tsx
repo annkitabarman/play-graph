@@ -3,7 +3,6 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import CurrentOrLastPlayGame from "./CurrentOrLastPlayedGame";
 import StatsCard from "./StatsCard";
 import PlaytimePieChart from "../charts/PlaytimePieChart";
-import GenreBarChart from "../charts/GenreBarChart";
 import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
 import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
 
@@ -97,11 +96,11 @@ export default function SteamConnectedHome() {
           {/* Genre chart */}
           <div className="min-w-0 flex-1">
             <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
-              <h3 className="mb-2 text-sm font-semibold tracking-wider text-violet-200">
-                Genres played
+              <h3 className="mb-2 ml-12 text-sm font-semibold tracking-wider text-violet-200">
+                Daily playtime
               </h3>
 
-              <GenreBarChart data={data.top_genres} />
+              <DailyPlayTimeChart />
             </div>
           </div>
 
@@ -119,8 +118,6 @@ export default function SteamConnectedHome() {
             </div>
           </div>
         </div>
-
-        <DailyPlayTimeChart />
       </div>
     </div>
   );

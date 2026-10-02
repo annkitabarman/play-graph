@@ -9,7 +9,7 @@ import prisma from "../lib/prisma";
 import { syncSteamAccount } from "../services/steam-sync.service";
 import { updateCurrentlyPlaying } from "../services/currently-playing.service";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
-import { subDays, addDays } from "date-fns";
+import { addDays } from "date-fns";
 
 const router = Router();
 
@@ -179,7 +179,7 @@ router.get("/status", async (req, res) => {
 
 router.post("/sync", async (req, res) => {
   try {
-    const { timezone } = req.body;
+    const { timezone } = req.body ?? {};
     if (!timezone) {
       return res.status(400).json({
         message: "Timezone is required.",

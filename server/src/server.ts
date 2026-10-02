@@ -6,7 +6,7 @@ import { clerkMiddleware, getAuth } from "@clerk/express";
 import steamRoutes from "./routes/steam.routes";
 import session from "express-session";
 import { startDailySnapshotJob } from "./jobs/daily-snapshot.job";
-import redis, { connectRedis } from "./lib/redis";
+import { connectRedis } from "./lib/redis";
 
 startDailySnapshotJob();
 
