@@ -30,7 +30,7 @@ export async function syncSteamAccount(userId: string, steamId: string) {
     `Syncing ${steamGames.length} games (${ownedGames.length} owned, ${recentlyPlayedGames.total_count} recently played)`,
   );
 
-  let syncedGames = 0;
+  let syncedGamesCount = 0;
 
   for (const steamGame of steamGames) {
     const details = await getSteamGameDetails(steamGame.appid);
@@ -62,6 +62,7 @@ export async function syncSteamAccount(userId: string, steamId: string) {
     });
 
     const playtimeMinutes = steamGame.playtime_forever ?? 0;
+    const playtimeMinutes2Weeks = steamGame.playtime_2weeks ?? 0;
 
     await prisma.userGame.upsert({
       where: {
@@ -72,6 +73,7 @@ export async function syncSteamAccount(userId: string, steamId: string) {
       },
       update: {
         playtimeMinutes,
+        playtimeMinutes2Weeks: playtimeMinutes2Weeks,
       },
       create: {
         userId,
@@ -80,10 +82,10 @@ export async function syncSteamAccount(userId: string, steamId: string) {
       },
     });
 
-    syncedGames++;
+    syncedGamesCount++;
   }
 
   return {
-    games_synced: syncedGames,
+    games_synced: syncedGamesCount,
   };
 }

@@ -62,6 +62,7 @@ model UserGame {
 
   // Current cumulative playtime from the platform
   playtimeMinutes Int @default(0)
+  playtimeMinutes2Weeks Int @default(0)
 
   // When the platform says the game was last played
   lastPlayedAt DateTime?

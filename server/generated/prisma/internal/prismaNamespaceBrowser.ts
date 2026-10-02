@@ -118,6 +118,7 @@ export const UserGameScalarFieldEnum = {
   userId: 'userId',
   gameId: 'gameId',
   playtimeMinutes: 'playtimeMinutes',
+  playtimeMinutes2Weeks: 'playtimeMinutes2Weeks',
   lastPlayedAt: 'lastPlayedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

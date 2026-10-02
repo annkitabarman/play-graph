@@ -28,10 +28,12 @@ export type AggregateUserGame = {
 
 export type UserGameAvgAggregateOutputType = {
   playtimeMinutes: number | null
+  playtimeMinutes2Weeks: number | null
 }
 
 export type UserGameSumAggregateOutputType = {
   playtimeMinutes: number | null
+  playtimeMinutes2Weeks: number | null
 }
 
 export type UserGameMinAggregateOutputType = {
@@ -39,6 +41,7 @@ export type UserGameMinAggregateOutputType = {
   userId: string | null
   gameId: string | null
   playtimeMinutes: number | null
+  playtimeMinutes2Weeks: number | null
   lastPlayedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +52,7 @@ export type UserGameMaxAggregateOutputType = {
   userId: string | null
   gameId: string | null
   playtimeMinutes: number | null
+  playtimeMinutes2Weeks: number | null
   lastPlayedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,6 +63,7 @@ export type UserGameCountAggregateOutputType = {
   userId: number
   gameId: number
   playtimeMinutes: number
+  playtimeMinutes2Weeks: number
   lastPlayedAt: number
   createdAt: number
   updatedAt: number
@@ -68,10 +73,12 @@ export type UserGameCountAggregateOutputType = {
 
 export type UserGameAvgAggregateInputType = {
   playtimeMinutes?: true
+  playtimeMinutes2Weeks?: true
 }
 
 export type UserGameSumAggregateInputType = {
   playtimeMinutes?: true
+  playtimeMinutes2Weeks?: true
 }
 
 export type UserGameMinAggregateInputType = {
@@ -79,6 +86,7 @@ export type UserGameMinAggregateInputType = {
   userId?: true
   gameId?: true
   playtimeMinutes?: true
+  playtimeMinutes2Weeks?: true
   lastPlayedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -89,6 +97,7 @@ export type UserGameMaxAggregateInputType = {
   userId?: true
   gameId?: true
   playtimeMinutes?: true
+  playtimeMinutes2Weeks?: true
   lastPlayedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +108,7 @@ export type UserGameCountAggregateInputType = {
   userId?: true
   gameId?: true
   playtimeMinutes?: true
+  playtimeMinutes2Weeks?: true
   lastPlayedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -196,6 +206,7 @@ export type UserGameGroupByOutputType = {
   userId: string
   gameId: string
   playtimeMinutes: number
+  playtimeMinutes2Weeks: number
   lastPlayedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -229,6 +240,7 @@ export type UserGameWhereInput = {
   userId?: Prisma.StringFilter<"UserGame"> | string
   gameId?: Prisma.StringFilter<"UserGame"> | string
   playtimeMinutes?: Prisma.IntFilter<"UserGame"> | number
+  playtimeMinutes2Weeks?: Prisma.IntFilter<"UserGame"> | number
   lastPlayedAt?: Prisma.DateTimeNullableFilter<"UserGame"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
@@ -241,6 +253,7 @@ export type UserGameOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
   lastPlayedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -257,6 +270,7 @@ export type UserGameWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"UserGame"> | string
   gameId?: Prisma.StringFilter<"UserGame"> | string
   playtimeMinutes?: Prisma.IntFilter<"UserGame"> | number
+  playtimeMinutes2Weeks?: Prisma.IntFilter<"UserGame"> | number
   lastPlayedAt?: Prisma.DateTimeNullableFilter<"UserGame"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
@@ -269,6 +283,7 @@ export type UserGameOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
   lastPlayedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -287,6 +302,7 @@ export type UserGameScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"UserGame"> | string
   gameId?: Prisma.StringWithAggregatesFilter<"UserGame"> | string
   playtimeMinutes?: Prisma.IntWithAggregatesFilter<"UserGame"> | number
+  playtimeMinutes2Weeks?: Prisma.IntWithAggregatesFilter<"UserGame"> | number
   lastPlayedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserGame"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserGame"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserGame"> | Date | string
@@ -295,6 +311,7 @@ export type UserGameScalarWhereWithAggregatesInput = {
 export type UserGameCreateInput = {
   id?: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -307,6 +324,7 @@ export type UserGameUncheckedCreateInput = {
   userId: string
   gameId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -315,6 +333,7 @@ export type UserGameUncheckedCreateInput = {
 export type UserGameUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -327,6 +346,7 @@ export type UserGameUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -337,6 +357,7 @@ export type UserGameCreateManyInput = {
   userId: string
   gameId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -345,6 +366,7 @@ export type UserGameCreateManyInput = {
 export type UserGameUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -355,6 +377,7 @@ export type UserGameUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -380,6 +403,7 @@ export type UserGameCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
   lastPlayedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -387,6 +411,7 @@ export type UserGameCountOrderByAggregateInput = {
 
 export type UserGameAvgOrderByAggregateInput = {
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
 }
 
 export type UserGameMaxOrderByAggregateInput = {
@@ -394,6 +419,7 @@ export type UserGameMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
   lastPlayedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -404,6 +430,7 @@ export type UserGameMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
   lastPlayedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -411,6 +438,7 @@ export type UserGameMinOrderByAggregateInput = {
 
 export type UserGameSumOrderByAggregateInput = {
   playtimeMinutes?: Prisma.SortOrder
+  playtimeMinutes2Weeks?: Prisma.SortOrder
 }
 
 export type UserGameCreateNestedManyWithoutUserInput = {
@@ -512,6 +540,7 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 export type UserGameCreateWithoutUserInput = {
   id?: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -522,6 +551,7 @@ export type UserGameUncheckedCreateWithoutUserInput = {
   id?: string
   gameId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -561,6 +591,7 @@ export type UserGameScalarWhereInput = {
   userId?: Prisma.StringFilter<"UserGame"> | string
   gameId?: Prisma.StringFilter<"UserGame"> | string
   playtimeMinutes?: Prisma.IntFilter<"UserGame"> | number
+  playtimeMinutes2Weeks?: Prisma.IntFilter<"UserGame"> | number
   lastPlayedAt?: Prisma.DateTimeNullableFilter<"UserGame"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserGame"> | Date | string
@@ -569,6 +600,7 @@ export type UserGameScalarWhereInput = {
 export type UserGameCreateWithoutGameInput = {
   id?: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -579,6 +611,7 @@ export type UserGameUncheckedCreateWithoutGameInput = {
   id?: string
   userId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -614,6 +647,7 @@ export type UserGameCreateManyUserInput = {
   id?: string
   gameId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -622,6 +656,7 @@ export type UserGameCreateManyUserInput = {
 export type UserGameUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,6 +667,7 @@ export type UserGameUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -641,6 +677,7 @@ export type UserGameUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -650,6 +687,7 @@ export type UserGameCreateManyGameInput = {
   id?: string
   userId: string
   playtimeMinutes?: number
+  playtimeMinutes2Weeks?: number
   lastPlayedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -658,6 +696,7 @@ export type UserGameCreateManyGameInput = {
 export type UserGameUpdateWithoutGameInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -668,6 +707,7 @@ export type UserGameUncheckedUpdateWithoutGameInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -677,6 +717,7 @@ export type UserGameUncheckedUpdateManyWithoutGameInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   playtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  playtimeMinutes2Weeks?: Prisma.IntFieldUpdateOperationsInput | number
   lastPlayedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -689,6 +730,7 @@ export type UserGameSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   userId?: boolean
   gameId?: boolean
   playtimeMinutes?: boolean
+  playtimeMinutes2Weeks?: boolean
   lastPlayedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -701,6 +743,7 @@ export type UserGameSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   gameId?: boolean
   playtimeMinutes?: boolean
+  playtimeMinutes2Weeks?: boolean
   lastPlayedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -713,6 +756,7 @@ export type UserGameSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   gameId?: boolean
   playtimeMinutes?: boolean
+  playtimeMinutes2Weeks?: boolean
   lastPlayedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -725,12 +769,13 @@ export type UserGameSelectScalar = {
   userId?: boolean
   gameId?: boolean
   playtimeMinutes?: boolean
+  playtimeMinutes2Weeks?: boolean
   lastPlayedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserGameOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "gameId" | "playtimeMinutes" | "lastPlayedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userGame"]>
+export type UserGameOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "gameId" | "playtimeMinutes" | "playtimeMinutes2Weeks" | "lastPlayedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userGame"]>
 export type UserGameInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   game?: boolean | Prisma.GameDefaultArgs<ExtArgs>
@@ -755,6 +800,7 @@ export type $UserGamePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     userId: string
     gameId: string
     playtimeMinutes: number
+    playtimeMinutes2Weeks: number
     lastPlayedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1187,6 +1233,7 @@ export interface UserGameFieldRefs {
   readonly userId: Prisma.FieldRef<"UserGame", 'String'>
   readonly gameId: Prisma.FieldRef<"UserGame", 'String'>
   readonly playtimeMinutes: Prisma.FieldRef<"UserGame", 'Int'>
+  readonly playtimeMinutes2Weeks: Prisma.FieldRef<"UserGame", 'Int'>
   readonly lastPlayedAt: Prisma.FieldRef<"UserGame", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"UserGame", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserGame", 'DateTime'>
