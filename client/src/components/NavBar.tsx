@@ -24,16 +24,6 @@ export default function NavBar() {
 
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-xl
-                              border border-violet-400/20
-                              bg-gradient-to-br from-violet-500/20 to-pink-500/10
-                              text-sm text-violet-300
-                              shadow-[0_0_20px_rgba(139,92,246,0.12)]"
-            >
-              ◈
-            </div>
-
             <span className="text-[17px] font-semibold tracking-tight">
               PlayGraph
             </span>

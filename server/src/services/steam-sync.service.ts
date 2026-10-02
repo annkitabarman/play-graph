@@ -63,6 +63,9 @@ export async function syncSteamAccount(userId: string, steamId: string) {
 
     const playtimeMinutes = steamGame.playtime_forever ?? 0;
     const playtimeMinutes2Weeks = steamGame.playtime_2weeks ?? 0;
+    const lastPlayedAt = steamGame.rtime_last_played
+      ? new Date(steamGame.rtime_last_played * 1000)
+      : null;
 
     await prisma.userGame.upsert({
       where: {
@@ -74,11 +77,13 @@ export async function syncSteamAccount(userId: string, steamId: string) {
       update: {
         playtimeMinutes,
         playtimeMinutes2Weeks: playtimeMinutes2Weeks,
+        lastPlayedAt,
       },
       create: {
         userId,
         gameId: game.id,
         playtimeMinutes,
+        lastPlayedAt,
       },
     });
 

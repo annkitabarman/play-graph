@@ -5,6 +5,7 @@ import StatsCard from "./StatsCard";
 import PlaytimePieChart from "../charts/PlaytimePieChart";
 import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
 import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
+import MostPlayedCard from "./most-played/MostPlayedCard";
 
 export default function SteamConnectedHome() {
   const { data, isLoading, isError, error } = useQuery({
@@ -83,7 +84,7 @@ export default function SteamConnectedHome() {
         </div>
 
         <div className="my-5 flex w-full items-stretch gap-5">
-          {/* Genre chart */}
+          {/* Daily Playtime chart */}
           <div className="min-w-0 flex-1">
             <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
               <h3 className="mb-2 ml-12 text-sm font-semibold tracking-wider text-violet-200">
@@ -94,7 +95,7 @@ export default function SteamConnectedHome() {
             </div>
           </div>
 
-          {/* Playtime chart */}
+          {/* Playtime Distribution chart */}
           <div className="w-[240px] shrink-0">
             <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
               <h3 className="mb-2 text-sm font-semibold tracking-wider text-violet-200">
@@ -107,6 +108,10 @@ export default function SteamConnectedHome() {
               />
             </div>
           </div>
+        </div>
+
+        <div>
+          <MostPlayedCard />
         </div>
       </div>
     </div>

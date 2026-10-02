@@ -418,7 +418,7 @@ router.get("/currently-playing", async (req, res) => {
   }
 });
 
-router.get("/recently-played", async (req, res) => {
+router.get("/most-played", async (req, res) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -429,13 +429,6 @@ router.get("/recently-played", async (req, res) => {
       where: {
         clerkUserId: userId,
       },
-      include: {
-        connectedAccounts: {
-          where: {
-            platform: "steam",
-          },
-        },
-      },
     });
 
     if (!user) {
@@ -444,12 +437,27 @@ router.get("/recently-played", async (req, res) => {
       });
     }
 
-    const steamAccount = user.connectedAccounts[0];
-    const response = await getRecentlyPlayedGames(steamAccount.externalId);
+    const games = await prisma.userGame.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        game: true,
+      },
+      orderBy: {
+        playtimeMinutes: "desc",
+      },
+    });
 
     return res.json({
-      total_count: response.total_count,
-      games: response.games,
+      games: games.map((userGame) => ({
+        id: userGame.game.id,
+        name: userGame.game.name,
+        image_url: userGame.game.imageUrl,
+        playtime_minutes: userGame.playtimeMinutes,
+        playtime_2weeks: userGame.playtimeMinutes2Weeks,
+      })),
+      total_count: games.length,
     });
   } catch (err) {
     console.error("Failed to get recently played games.", err);

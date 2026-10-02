@@ -11,7 +11,6 @@ export async function getSteamDashBoard() {
 }
 
 export async function syncSteam(timezone: string) {
-  console.log("BACKEND URL:", BACKEND_URL);
   const response = await fetch(`${BACKEND_URL}/steam/sync`, {
     method: "POST",
     credentials: "include",
@@ -39,8 +38,8 @@ export async function getCurrentlyPlaying() {
   return response.json();
 }
 
-export async function getRecentlyPlayedGames() {
-  const response = await fetch(`${BACKEND_URL}/steam/recently-played`, {
+export async function getMostPlayedGames() {
+  const response = await fetch(`${BACKEND_URL}/steam/most-played`, {
     credentials: "include",
   });
 
