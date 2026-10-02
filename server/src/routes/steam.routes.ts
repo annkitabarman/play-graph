@@ -458,6 +458,7 @@ router.get("/most-played", async (req, res) => {
         playtime_minutes: userGame.playtimeMinutes,
         playtime_2weeks: userGame.playtimeMinutes2Weeks,
         external_id: userGame.game.externalId,
+        last_played_at: userGame.lastPlayedAt,
       })),
       total_count: games.length,
     });

@@ -4,13 +4,30 @@ import { STEAM_URL } from "../../constants/urls";
 interface Props {
   game: MostPlayedGame;
   rank: number;
+  showLastPlayed?: boolean;
 }
 
 function formatHours(minutes: number) {
   return `${(minutes / 60).toFixed(1)}h`;
 }
 
-export default function MostPlayedGameRow({ game, rank }: Props) {
+function formatLastPlayed(lastPlayedAt: string | null) {
+  if (!lastPlayedAt) {
+    return "Never";
+  }
+
+  return new Date(lastPlayedAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export default function MostPlayedGameRow({
+  game,
+  rank,
+  showLastPlayed = false,
+}: Props) {
   const progress =
     game.playtime_minutes > 0
       ? Math.min((game.playtime_2weeks / game.playtime_minutes) * 100, 100)
@@ -46,18 +63,30 @@ export default function MostPlayedGameRow({ game, rank }: Props) {
             {/* Tooltip */}
             <div
               className="pointer-events-none absolute left-0 top-full z-50 mt-2
-                 whitespace-nowrap rounded-lg border border-violet-500/20
-                 bg-[#171322] px-3 py-1.5 text-xs text-violet-200
-                 opacity-0 shadow-xl transition-opacity duration-200
-                 group-hover/game:opacity-100"
+                         whitespace-nowrap rounded-lg border border-violet-500/20
+                         bg-[#171322] px-3 py-1.5 text-xs text-violet-200
+                         opacity-0 shadow-xl transition-opacity duration-200
+                         group-hover/game:opacity-100"
             >
               Go to Steam page
             </div>
           </div>
 
-          <p className="mt-1 text-xs text-violet-300">
-            {formatHours(game.playtime_2weeks)} last 2 weeks
-          </p>
+          <div className="mt-1 flex items-center gap-3 text-xs">
+            <p className="text-violet-300">
+              {formatHours(game.playtime_2weeks)} last 2 weeks
+            </p>
+
+            {showLastPlayed && game.last_played_at && (
+              <>
+                <span className="h-3 w-px bg-white/10" />
+
+                <p className="text-white/35">
+                  Last played {formatLastPlayed(game.last_played_at)}
+                </p>
+              </>
+            )}
+          </div>
 
           {/* Progress */}
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#29245a]">

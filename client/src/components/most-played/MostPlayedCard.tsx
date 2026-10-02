@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { getMostPlayedGames } from "../../apis/steam.api";
 import type { MostPlayedResponse } from "../../types/steam.types";
 import MostPlayedGameRow from "./MostPlayedGameRow";
+import { Link } from "react-router-dom";
 
 export default function MostPlayedCard() {
   const { data, isLoading, isError } = useQuery<MostPlayedResponse>({
@@ -48,10 +49,13 @@ export default function MostPlayedCard() {
       <div className="mb-5 flex items-center justify-between">
         <h3 className="text-lg font-bold text-white">Most played</h3>
 
-        <button className="flex items-center gap-1 text-sm font-semibold text-cyan-400 transition hover:text-cyan-300">
+        <Link
+          to="/library"
+          className="flex items-center gap-1 text-sm font-semibold text-cyan-400 transition hover:cursor-pointer hover:text-cyan-300"
+        >
           All {data.total_count} games
           <ArrowRight size={16} />
-        </button>
+        </Link>
       </div>
 
       {/* Games */}
@@ -62,7 +66,7 @@ export default function MostPlayedCard() {
       </div>
 
       {/* Footer */}
-      <button className="mt-3 flex w-full items-center justify-center gap-2 border border-violet-500/20 py-3 text-sm font-semibold text-violet-300 transition hover:border-violet-400/40 hover:text-white">
+      <button className="mt-3 flex w-full items-center justify-center gap-2 border border-violet-500/20 py-3 text-sm font-semibold text-violet-300 transition hover:border-violet-400/40 hover:text-white hover:cursor-pointer">
         View full game library
         <ArrowRight size={16} />
       </button>

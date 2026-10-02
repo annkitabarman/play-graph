@@ -5,6 +5,7 @@ export interface MostPlayedGame {
   playtime_minutes: number;
   playtime_2weeks: number;
   external_id: number;
+  last_played_at: string;
 }
 
 export interface MostPlayedResponse {

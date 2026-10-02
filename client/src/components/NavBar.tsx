@@ -26,7 +26,7 @@ export default function NavBar() {
     : "never";
 
   return (
-    <header className="relative z-50 h-16 border-b border-white/10 bg-[#0b0912]/75 backdrop-blur-2xl">
+    <header className="relative z-50 h-16 border-b border-white/5 bg-[#0b0912]">
       <div className="flex h-full items-center justify-between px-5 md:px-8">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -49,7 +49,7 @@ export default function NavBar() {
 
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <span className="text-[17px] font-semibold tracking-tight">
+            <span className="text-[17px] font-semibold tracking-tight text-white">
               PlayGraph
             </span>
           </div>

@@ -5,11 +5,12 @@ import type { MostPlayedResponse } from "../types/steam.types";
 
 import MostPlayedGameRow from "../components/most-played/MostPlayedGameRow";
 
-export default function MostPlayedPage() {
+export default function Library() {
   const { data, isLoading, isError } = useQuery<MostPlayedResponse>({
     queryKey: ["steam", "most-played"],
     queryFn: getMostPlayedGames,
   });
+  console.log(data);
 
   if (isLoading) {
     return (
@@ -49,10 +50,10 @@ export default function MostPlayedPage() {
         <div className="mb-8">
           <div className="flex items-end justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Most played</h1>
+              <h1 className="text-3xl font-bold">Library</h1>
 
               <p className="mt-2 text-sm text-violet-300">
-                Your most recently active games
+                All your games at one place
               </p>
             </div>
 
@@ -65,7 +66,12 @@ export default function MostPlayedPage() {
         {/* Games */}
         <div className="space-y-3">
           {data.games.map((game, index) => (
-            <MostPlayedGameRow key={game.id} game={game} rank={index + 1} />
+            <MostPlayedGameRow
+              key={game.id}
+              game={game}
+              rank={index + 1}
+              showLastPlayed={true}
+            />
           ))}
         </div>
       </div>

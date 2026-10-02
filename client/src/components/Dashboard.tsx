@@ -1,4 +1,3 @@
-import NavBar from "./NavBar";
 import SteamNotConnected from "./SteamNotConnected";
 import { useState, useEffect } from "react";
 import SteamConnectedHome from "./SteamConnectedHome";
@@ -88,7 +87,6 @@ function Dashboard() {
           }}
         />
       </div>
-      <NavBar />
       <SteamContent />
     </div>
   );
