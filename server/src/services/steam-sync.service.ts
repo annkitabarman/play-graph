@@ -4,6 +4,7 @@ import {
   getSteamGameDetails,
   getRecentlyPlayedGames,
 } from "./steam.service";
+import redis from "../lib/redis";
 
 export async function syncSteamAccount(userId: string, steamId: string) {
   const ownedGames = await getOwnedGames(steamId);
@@ -89,6 +90,11 @@ export async function syncSteamAccount(userId: string, steamId: string) {
 
     syncedGamesCount++;
   }
+
+  await redis.set(
+    `playgraph:user:${userId}:last-sync`,
+    new Date().toISOString(),
+  );
 
   return {
     games_synced: syncedGamesCount,

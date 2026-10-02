@@ -56,3 +56,12 @@ export async function getDailyPlayTime() {
   if (!response.ok) throw new Error("Failed to get daily play time.");
   return response.json();
 }
+
+export async function getLastSynced() {
+  const response = await fetch(`${BACKEND_URL}/steam/last-synced`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) throw new Error("Failed to get last synced time.");
+  return response.json();
+}

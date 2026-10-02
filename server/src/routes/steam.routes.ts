@@ -10,6 +10,7 @@ import { syncSteamAccount } from "../services/steam-sync.service";
 import { updateCurrentlyPlaying } from "../services/currently-playing.service";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { addDays } from "date-fns";
+import redis from "../lib/redis";
 
 const router = Router();
 
@@ -575,4 +576,39 @@ router.get("/daily-play-time", async (req, res) => {
     });
   }
 });
+
+router.get("/last-synced", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        message: "You must be logged in.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const lastSyncedAt = await redis.get(`playgraph:user:${user.id}:last-sync`);
+
+    return res.json({
+      last_synced_at: lastSyncedAt,
+    });
+  } catch (err) {
+    console.log("Failed to get last synced time.", err);
+    return res.status(500).json({
+      message: "Failed to get last synced time",
+    });
+  }
+});
+
 export default router;
