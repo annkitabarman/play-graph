@@ -614,4 +614,52 @@ router.get("/last-synced", async (req, res) => {
   }
 });
 
+router.get("/profile", async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        message: "You must be logged in.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+      include: {
+        connectedAccounts: {
+          where: {
+            platform: "steam",
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const steamAccount = user.connectedAccounts[0];
+    if (!steamAccount) {
+      return res.status(404).json({
+        message: "Steam account not connected.",
+      });
+    }
+
+    return res.json({
+      steam_id: steamAccount.externalId,
+      avatar_url: steamAccount.avatarUrl,
+      username: steamAccount.username,
+    });
+  } catch (err) {
+    console.error("Failed to fetch profile details", err);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch profile details." });
+  }
+});
+
 export default router;

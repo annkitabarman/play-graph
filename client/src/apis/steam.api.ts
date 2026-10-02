@@ -65,3 +65,12 @@ export async function getLastSynced() {
   if (!response.ok) throw new Error("Failed to get last synced time.");
   return response.json();
 }
+
+export async function getSteamProfileDetails() {
+  const response = await fetch(`${BACKEND_URL}/steam/profile`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Failed to get profile details.");
+
+  return response.json();
+}
