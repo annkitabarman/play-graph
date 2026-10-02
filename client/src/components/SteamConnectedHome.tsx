@@ -30,36 +30,36 @@ export default function SteamConnectedHome() {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-1 grid-cols-3 items-start">
-          {/* Left side - cards */}
-          <div className="grid gap-5 grid-cols-3 lg:col-span-3">
-            <StatsCard
-              header="Games"
-              value={data.total_games}
-              icon={Gamepad2}
-              note="games in your library"
-            />
+        <div className="grid grid-cols-3 gap-3 sm:gap-5">
+          <StatsCard
+            header="Games"
+            value={data.total_games}
+            icon={Gamepad2}
+            note="games in your library"
+          />
 
-            <StatsCard
-              header="Total Playtime"
-              value={`${(data.total_play_time_minutes / 60).toFixed(1)}h`}
-              icon={Clock3}
-              note={`${data.total_play_time_minutes.toLocaleString()} minutes played`}
-            />
-            <StatsCard
-              header="Average per Game"
-              value={`${(
-                data.total_play_time_minutes /
-                data.total_games /
-                60
-              ).toFixed(1)}h`}
-              icon={ChartNoAxesColumn}
-              note={`${Math.floor(data.total_play_time_minutes / data.total_games)} minutes per game`}
-            />
-          </div>
+          <StatsCard
+            header="Total Playtime"
+            value={`${(data.total_play_time_minutes / 60).toFixed(1)}h`}
+            icon={Clock3}
+            note={`${data.total_play_time_minutes.toLocaleString()} minutes played`}
+          />
+
+          <StatsCard
+            header="Average per Game"
+            value={`${(
+              data.total_play_time_minutes /
+              data.total_games /
+              60
+            ).toFixed(1)}h`}
+            icon={ChartNoAxesColumn}
+            note={`${Math.floor(
+              data.total_play_time_minutes / data.total_games,
+            )} minutes per game`}
+          />
         </div>
 
-        <div className="my-5 flex w-full items-stretch gap-5">
+        <div className="my-5 flex w-full flex-col gap-5 lg:flex-row">
           {/* Daily Playtime chart */}
           <div className="min-w-0 flex-1">
             <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
@@ -72,16 +72,18 @@ export default function SteamConnectedHome() {
           </div>
 
           {/* Playtime Distribution chart */}
-          <div className="w-[240px] shrink-0">
+          <div className="w-full lg:w-[300px]">
             <div className="h-full w-full rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
               <h3 className="mb-2 text-sm font-semibold tracking-wider text-violet-200">
                 Playtime Distribution
               </h3>
 
-              <PlaytimePieChart
-                data={data.playtime_distribution}
-                totalGames={data.total_games}
-              />
+              <div className="mx-auto w-full max-w-[320px]">
+                <PlaytimePieChart
+                  data={data.playtime_distribution}
+                  totalGames={data.total_games}
+                />
+              </div>
             </div>
           </div>
         </div>
