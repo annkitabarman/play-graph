@@ -1,15 +1,11 @@
-import {
-  getSteamDashBoard,
-  syncSteam,
-  getRecentlyPlayedGames,
-} from "../apis/steam.api";
+import { getSteamDashBoard, syncSteam } from "../apis/steam.api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import CurrentOrLastPlayGame from "./CurrentOrLastPlayedGame";
 import StatsCard from "./StatsCard";
 import PlaytimePieChart from "../charts/PlaytimePieChart";
 import GenreBarChart from "../charts/GenreBarChart";
 import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
-// import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
+import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
 
 export default function SteamConnectedHome() {
   const { data, isLoading, isError, error } = useQuery({
@@ -17,23 +13,25 @@ export default function SteamConnectedHome() {
     queryFn: getSteamDashBoard,
   });
 
-  const {
-    data: recentlyPlayed,
-    isLoading: recentlyPlayedLoading,
-    isError: recentlyPlayedError,
-  } = useQuery({
-    queryKey: ["steam", "recently-played"],
-    queryFn: getRecentlyPlayedGames,
-  });
+  // const {
+  //   data: recentlyPlayed,
+  //   isLoading: recentlyPlayedLoading,
+  //   isError: recentlyPlayedError,
+  // } = useQuery({
+  //   queryKey: ["steam", "recently-played"],
+  //   queryFn: getRecentlyPlayedGames,
+  // });
 
-  console.log(recentlyPlayed, recentlyPlayedLoading, recentlyPlayedError);
+  // console.log(recentlyPlayed, recentlyPlayedLoading, recentlyPlayedError);
   const queryClient = useQueryClient();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const syncMutation = useMutation({
     mutationFn: syncSteam,
-    onSuccess: () => {
+    onSuccess: (response) => {
       // Refresh dashboard data after sync
       // We'll invalidate the query here
+      console.log("Response", response);
       queryClient.invalidateQueries({
         queryKey: ["steam", "dashboard"],
       });
@@ -52,15 +50,15 @@ export default function SteamConnectedHome() {
     <div className="min-h-screen px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        {/* <div className="mb-10">
+        <div className="mb-10">
           <button
-            onClick={() => syncMutation.mutate()}
+            onClick={() => syncMutation.mutate(timezone)}
             disabled={syncMutation.isPending}
             className="rounded-xl bg-violet-600 px-5 py-2.5 font-medium transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {syncMutation.isPending ? "Syncing..." : "Sync Steam"}
           </button>
-        </div> */}
+        </div>
         <div className="mb-5">
           <CurrentOrLastPlayGame />
         </div>
@@ -122,7 +120,7 @@ export default function SteamConnectedHome() {
           </div>
         </div>
 
-        {/* <DailyPlayTimeChart /> */}
+        <DailyPlayTimeChart />
       </div>
     </div>
   );

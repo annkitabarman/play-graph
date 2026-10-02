@@ -8,6 +8,8 @@ import {
 import prisma from "../lib/prisma";
 import { syncSteamAccount } from "../services/steam-sync.service";
 import { updateCurrentlyPlaying } from "../services/currently-playing.service";
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+import { subDays, addDays } from "date-fns";
 
 const router = Router();
 
@@ -177,6 +179,13 @@ router.get("/status", async (req, res) => {
 
 router.post("/sync", async (req, res) => {
   try {
+    const { timezone } = req.body;
+    if (!timezone) {
+      return res.status(400).json({
+        message: "Timezone is required.",
+      });
+    }
+
     const { userId } = getAuth(req);
 
     if (!userId) {
@@ -203,6 +212,15 @@ router.post("/sync", async (req, res) => {
         message: "User not found.",
       });
     }
+
+    const updated = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        timezone,
+      },
+    });
 
     const steamAccount = user.connectedAccounts[0];
 
@@ -465,18 +483,31 @@ router.get("/daily-play-time", async (req, res) => {
       });
     }
 
-    const startDate = new Date();
-    startDate.setHours(0, 0, 0, 0);
-    startDate.setDate(startDate.getDate() - 6);
+    // Today's date according to the user's timezone
+    const today = formatInTimeZone(new Date(), user.timezone, "yyyy-MM-dd");
+
+    /*
+      We want the previous 7 COMPLETED days.
+
+      If today is Oct 2:
+
+      startDate = Sep 25
+      days      = Sep 25 ... Oct 1
+
+      Oct 2 is intentionally excluded.
+    */
+    const todayMidnight = fromZonedTime(`${today}T00:00:00`, user.timezone);
+
+    const startDate = addDays(todayMidnight, -7);
 
     const snapshots = await prisma.playtimeSnapshot.findMany({
       where: {
         userId: user.id,
         snapshotDate: {
           gte: startDate,
+          lt: todayMidnight,
         },
       },
-
       orderBy: {
         snapshotDate: "asc",
       },
@@ -485,11 +516,16 @@ router.get("/daily-play-time", async (req, res) => {
     const days = [];
 
     for (let i = 0; i < 7; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
+      /*
+        date is the beginning of the current day.
 
-      const nextDate = new Date(date);
-      nextDate.setDate(date.getDate() + 1);
+        Since startDate is a UTC instant representing
+        midnight in the user's timezone, addDays gives
+        us the next calendar day.
+      */
+      const date = addDays(startDate, i);
+
+      const nextDate = addDays(date, 1);
 
       const daySnapshots = snapshots.filter(
         (snap) => snap.snapshotDate >= date && snap.snapshotDate < nextDate,
@@ -517,7 +553,7 @@ router.get("/daily-play-time", async (req, res) => {
       }
 
       days.push({
-        date: date.toISOString().split("T")[0],
+        date: formatInTimeZone(date, user.timezone, "yyyy-MM-dd"),
         minutes,
       });
     }

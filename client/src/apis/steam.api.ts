@@ -10,10 +10,15 @@ export async function getSteamDashBoard() {
   return response.json();
 }
 
-export async function syncSteam() {
+export async function syncSteam(timezone: string) {
+  console.log("BACKEND URL:", BACKEND_URL);
   const response = await fetch(`${BACKEND_URL}/steam/sync`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ timezone }),
   });
 
   if (!response.ok) {
