@@ -17,6 +17,7 @@ model User {
   connectedAccounts ConnectedAccount[]
   games             UserGame[]
   playtimeSnapshots PlaytimeSnapshot[]
+  timezone          String @default("UTC")
 }
 
 model ConnectedAccount {

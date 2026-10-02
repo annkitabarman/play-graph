@@ -834,7 +834,8 @@ export const UserScalarFieldEnum = {
   id: 'id',
   clerkUserId: 'clerkUserId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  timezone: 'timezone'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]

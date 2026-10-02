@@ -29,6 +29,7 @@ export type UserMinAggregateOutputType = {
   clerkUserId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  timezone: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type UserMaxAggregateOutputType = {
   clerkUserId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  timezone: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type UserCountAggregateOutputType = {
   clerkUserId: number
   createdAt: number
   updatedAt: number
+  timezone: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type UserMinAggregateInputType = {
   clerkUserId?: true
   createdAt?: true
   updatedAt?: true
+  timezone?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type UserMaxAggregateInputType = {
   clerkUserId?: true
   createdAt?: true
   updatedAt?: true
+  timezone?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type UserCountAggregateInputType = {
   clerkUserId?: true
   createdAt?: true
   updatedAt?: true
+  timezone?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type UserGroupByOutputType = {
   clerkUserId: string
   createdAt: Date
   updatedAt: Date
+  timezone: string
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type UserWhereInput = {
   clerkUserId?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  timezone?: Prisma.StringFilter<"User"> | string
   connectedAccounts?: Prisma.ConnectedAccountListRelationFilter
   games?: Prisma.UserGameListRelationFilter
   playtimeSnapshots?: Prisma.PlaytimeSnapshotListRelationFilter
@@ -184,6 +192,7 @@ export type UserOrderByWithRelationInput = {
   clerkUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   connectedAccounts?: Prisma.ConnectedAccountOrderByRelationAggregateInput
   games?: Prisma.UserGameOrderByRelationAggregateInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotOrderByRelationAggregateInput
@@ -197,6 +206,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  timezone?: Prisma.StringFilter<"User"> | string
   connectedAccounts?: Prisma.ConnectedAccountListRelationFilter
   games?: Prisma.UserGameListRelationFilter
   playtimeSnapshots?: Prisma.PlaytimeSnapshotListRelationFilter
@@ -207,6 +217,7 @@ export type UserOrderByWithAggregationInput = {
   clerkUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -220,6 +231,7 @@ export type UserScalarWhereWithAggregatesInput = {
   clerkUserId?: Prisma.StringWithAggregatesFilter<"User"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  timezone?: Prisma.StringWithAggregatesFilter<"User"> | string
 }
 
 export type UserCreateInput = {
@@ -227,6 +239,7 @@ export type UserCreateInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountCreateNestedManyWithoutUserInput
   games?: Prisma.UserGameCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotCreateNestedManyWithoutUserInput
@@ -237,6 +250,7 @@ export type UserUncheckedCreateInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedCreateNestedManyWithoutUserInput
   games?: Prisma.UserGameUncheckedCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedCreateNestedManyWithoutUserInput
@@ -247,6 +261,7 @@ export type UserUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUpdateManyWithoutUserNestedInput
   games?: Prisma.UserGameUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUpdateManyWithoutUserNestedInput
@@ -257,6 +272,7 @@ export type UserUncheckedUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedUpdateManyWithoutUserNestedInput
   games?: Prisma.UserGameUncheckedUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedUpdateManyWithoutUserNestedInput
@@ -267,6 +283,7 @@ export type UserCreateManyInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
 }
 
 export type UserUpdateManyMutationInput = {
@@ -274,6 +291,7 @@ export type UserUpdateManyMutationInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -281,6 +299,7 @@ export type UserUncheckedUpdateManyInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -288,6 +307,7 @@ export type UserCountOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -295,6 +315,7 @@ export type UserMaxOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -302,6 +323,7 @@ export type UserMinOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -364,6 +386,7 @@ export type UserCreateWithoutConnectedAccountsInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   games?: Prisma.UserGameCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotCreateNestedManyWithoutUserInput
 }
@@ -373,6 +396,7 @@ export type UserUncheckedCreateWithoutConnectedAccountsInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   games?: Prisma.UserGameUncheckedCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedCreateNestedManyWithoutUserInput
 }
@@ -398,6 +422,7 @@ export type UserUpdateWithoutConnectedAccountsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   games?: Prisma.UserGameUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUpdateManyWithoutUserNestedInput
 }
@@ -407,6 +432,7 @@ export type UserUncheckedUpdateWithoutConnectedAccountsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   games?: Prisma.UserGameUncheckedUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -416,6 +442,7 @@ export type UserCreateWithoutGamesInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotCreateNestedManyWithoutUserInput
 }
@@ -425,6 +452,7 @@ export type UserUncheckedCreateWithoutGamesInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedCreateNestedManyWithoutUserInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedCreateNestedManyWithoutUserInput
 }
@@ -450,6 +478,7 @@ export type UserUpdateWithoutGamesInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUpdateManyWithoutUserNestedInput
 }
@@ -459,6 +488,7 @@ export type UserUncheckedUpdateWithoutGamesInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedUpdateManyWithoutUserNestedInput
   playtimeSnapshots?: Prisma.PlaytimeSnapshotUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -468,6 +498,7 @@ export type UserCreateWithoutPlaytimeSnapshotsInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountCreateNestedManyWithoutUserInput
   games?: Prisma.UserGameCreateNestedManyWithoutUserInput
 }
@@ -477,6 +508,7 @@ export type UserUncheckedCreateWithoutPlaytimeSnapshotsInput = {
   clerkUserId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  timezone?: string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedCreateNestedManyWithoutUserInput
   games?: Prisma.UserGameUncheckedCreateNestedManyWithoutUserInput
 }
@@ -502,6 +534,7 @@ export type UserUpdateWithoutPlaytimeSnapshotsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUpdateManyWithoutUserNestedInput
   games?: Prisma.UserGameUpdateManyWithoutUserNestedInput
 }
@@ -511,6 +544,7 @@ export type UserUncheckedUpdateWithoutPlaytimeSnapshotsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   connectedAccounts?: Prisma.ConnectedAccountUncheckedUpdateManyWithoutUserNestedInput
   games?: Prisma.UserGameUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -569,6 +603,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   clerkUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  timezone?: boolean
   connectedAccounts?: boolean | Prisma.User$connectedAccountsArgs<ExtArgs>
   games?: boolean | Prisma.User$gamesArgs<ExtArgs>
   playtimeSnapshots?: boolean | Prisma.User$playtimeSnapshotsArgs<ExtArgs>
@@ -580,6 +615,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   clerkUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  timezone?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -587,6 +623,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   clerkUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  timezone?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -594,9 +631,10 @@ export type UserSelectScalar = {
   clerkUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  timezone?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "createdAt" | "updatedAt" | "timezone", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   connectedAccounts?: boolean | Prisma.User$connectedAccountsArgs<ExtArgs>
   games?: boolean | Prisma.User$gamesArgs<ExtArgs>
@@ -618,6 +656,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     clerkUserId: string
     createdAt: Date
     updatedAt: Date
+    timezone: string
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1048,6 +1087,7 @@ export interface UserFieldRefs {
   readonly clerkUserId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly timezone: Prisma.FieldRef<"User", 'String'>
 }
     
 
