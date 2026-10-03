@@ -1,13 +1,38 @@
-import { getCurrentlyPlaying } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@clerk/react";
 import { History } from "lucide-react";
+
+import { getCurrentlyPlaying } from "../apis/steam.api";
 import { STEAM_URL } from "../assets/constants/urls";
+
 export default function CurrentOrLastPlayGame() {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "currently-playing"],
-    queryFn: getCurrentlyPlaying,
+
+    queryFn: () => getCurrentlyPlaying(getToken),
+
+    enabled: isLoaded && isSignedIn,
+
     refetchInterval: 60_000,
   });
+
+  if (!isLoaded) {
+    return (
+      <div className="relative overflow-hidden rounded-2xl border border-violet-500/20 bg-[#121021] p-5">
+        <div className="animate-pulse">
+          <div className="mb-4 h-3 w-24 rounded bg-white/10" />
+          <div className="h-7 w-48 rounded bg-white/10" />
+          <div className="mt-3 h-3 w-32 rounded bg-white/10" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -25,6 +50,7 @@ export default function CurrentOrLastPlayGame() {
     return (
       <div className="rounded-2xl border border-red-500/20 bg-[#121021] p-5">
         <p className="text-sm text-red-400">Failed to load current game</p>
+
         <p className="mt-1 text-xs text-white/40">{error.message}</p>
       </div>
     );
@@ -71,6 +97,7 @@ export default function CurrentOrLastPlayGame() {
               {data?.playing && (
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-60" />
+
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-pink-400" />
                 </span>
               )}
@@ -96,13 +123,7 @@ export default function CurrentOrLastPlayGame() {
               </a>
 
               {/* Tooltip */}
-              <div
-                className="pointer-events-none absolute left-0 top-full z-50 mt-2
-               whitespace-nowrap rounded-lg border border-violet-500/20
-               bg-[#171322] px-3 py-1.5 text-xs text-violet-200
-               opacity-0 shadow-xl transition-opacity duration-200
-               group-hover/game:opacity-100"
-              >
+              <div className="pointer-events-none absolute left-0 top-full z-50 mt-2 whitespace-nowrap rounded-lg border border-violet-500/20 bg-[#171322] px-3 py-1.5 text-xs text-violet-200 opacity-0 shadow-xl transition-opacity duration-200 group-hover/game:opacity-100">
                 Go to Steam page
               </div>
             </div>

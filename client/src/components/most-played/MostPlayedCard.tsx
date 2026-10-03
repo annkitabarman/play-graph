@@ -1,23 +1,56 @@
+import { useAuth } from "@clerk/react";
 import { useQuery } from "@tanstack/react-query";
+
 import { ArrowRight } from "lucide-react";
 
 import { getMostPlayedGames } from "../../apis/steam.api";
+
 import type { MostPlayedResponse } from "../../types/steam.types";
+
 import MostPlayedGameRow from "./MostPlayedGameRow";
+
 import { Link } from "react-router-dom";
 
 export default function MostPlayedCard() {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError } = useQuery<MostPlayedResponse>({
     queryKey: ["steam", "most-played"],
-    queryFn: getMostPlayedGames,
+
+    queryFn: () => getMostPlayedGames(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
+
+  if (!isLoaded) {
+    return (
+      <div className="rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="h-6 w-32 animate-pulse rounded bg-violet-500/20" />
+          <div className="h-5 w-24 animate-pulse rounded bg-violet-500/20" />
+        </div>
+
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-[86px] animate-pulse rounded-xl bg-violet-500/10"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
 
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-violet-500/20 bg-[#171238] p-5">
         <div className="mb-5 flex items-center justify-between">
           <div className="h-6 w-32 animate-pulse rounded bg-violet-500/20" />
-
           <div className="h-5 w-24 animate-pulse rounded bg-violet-500/20" />
         </div>
 
@@ -66,7 +99,7 @@ export default function MostPlayedCard() {
       </div>
 
       {/* Footer */}
-      <button className="mt-3 flex w-full items-center justify-center gap-2 border border-violet-500/20 py-3 text-sm font-semibold text-violet-300 transition hover:border-violet-400/40 hover:text-white hover:cursor-pointer">
+      <button className="mt-3 flex w-full items-center justify-center gap-2 border border-violet-500/20 py-3 text-sm font-semibold text-violet-300 transition hover:cursor-pointer hover:border-violet-400/40 hover:text-white">
         View full game library
         <ArrowRight size={16} />
       </button>

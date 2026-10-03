@@ -1,21 +1,34 @@
 import { useState } from "react";
+
+import { useAuth } from "@clerk/react";
+
 import { useQuery } from "@tanstack/react-query";
+
 import { ArrowDown, Search } from "lucide-react";
 
 import { getMostPlayedGames } from "../apis/steam.api";
+
 import type { MostPlayedResponse } from "../types/steam.types";
+
 import MostPlayedGameRow from "../components/most-played/MostPlayedGameRow";
 
 type SortBy = "name" | "mostPlayed" | "recentlyPlayed" | "recentlyAdded";
 
 export default function Library() {
   const [search, setSearch] = useState("");
+
   const [sortBy, setSortBy] = useState<SortBy>("mostPlayed");
+
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   const { data, isLoading, isError } = useQuery<MostPlayedResponse>({
     queryKey: ["steam", "most-played"],
-    queryFn: getMostPlayedGames,
+
+    queryFn: () => getMostPlayedGames(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
 
   const filteredGames = data?.games
@@ -47,6 +60,32 @@ export default function Library() {
       return sortDirection === "asc" ? comparison : -comparison;
     });
 
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-[#0d0924] px-6 py-10 text-white">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8">
+            <div className="h-9 w-48 animate-pulse rounded bg-violet-500/20" />
+            <div className="mt-2 h-4 w-64 animate-pulse rounded bg-violet-500/10" />
+          </div>
+
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="h-[86px] animate-pulse rounded-xl bg-violet-500/10"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0d0924] px-6 py-10 text-white">
@@ -54,7 +93,6 @@ export default function Library() {
           {/* Header skeleton */}
           <div className="mb-8">
             <div className="h-9 w-48 animate-pulse rounded bg-violet-500/20" />
-
             <div className="mt-2 h-4 w-64 animate-pulse rounded bg-violet-500/10" />
           </div>
 
@@ -113,7 +151,7 @@ export default function Library() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search games..."
-                className="w-full rounded-xl border border-violet-500/20 bg-[#171238] py-2.5 pl-10 pr-4 text-sm text-white outline-none placeholder:text-violet-400/50 transition focus:border-violet-400/40"
+                className="w-full rounded-xl border border-violet-500/20 bg-[#171238] py-2.5 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-violet-400/50 focus:border-violet-400/40"
               />
             </div>
 
@@ -125,11 +163,14 @@ export default function Library() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="appearance-none rounded-full border border-violet-500/15 bg-[#171238]/80 py-2.5 pl-4 pr-10 text-sm text-violet-100 outline-none transition-all duration-200 hover:border-violet-400/30 hover:bg-[#1a1540] focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10 hover:cursor-pointer"
+                  className="appearance-none rounded-full border border-violet-500/15 bg-[#171238]/80 py-2.5 pl-4 pr-10 text-sm text-violet-100 outline-none transition-all duration-200 hover:cursor-pointer hover:border-violet-400/30 hover:bg-[#1a1540] focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10"
                 >
                   <option value="mostPlayed">Most Played</option>
+
                   <option value="name">Name</option>
+
                   <option value="recentlyPlayed">Recently Played</option>
+
                   <option value="recentlyAdded">Recently Added</option>
                 </select>
 
@@ -154,7 +195,7 @@ export default function Library() {
                 onClick={() =>
                   setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
                 }
-                className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-violet-500/20 bg-[#171238] text-violet-300 transition-all duration-200 hover:border-violet-400/40 hover:bg-[#1d1748] hover:text-white hover:cursor-pointer"
+                className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-violet-500/20 bg-[#171238] text-violet-300 transition-all duration-200 hover:cursor-pointer hover:border-violet-400/40 hover:bg-[#1d1748] hover:text-white"
                 title={sortDirection === "asc" ? "Ascending" : "Descending"}
               >
                 <ArrowDown

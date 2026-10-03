@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@clerk/react";
 import { useEffect, useRef } from "react";
 import { getDailyPlayTime } from "../apis/steam.api";
 import * as d3 from "d3";
@@ -13,15 +14,22 @@ interface DailyPlayTimeResponse {
 }
 
 export default function DailyPlayTimeChart() {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError, error } = useQuery<DailyPlayTimeResponse>({
     queryKey: ["steam", "daily-play-time"],
-    queryFn: getDailyPlayTime,
+
+    queryFn: () => getDailyPlayTime(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!svgRef.current || !data?.days?.length) return;
+    if (!svgRef.current || !data?.days?.length) {
+      return;
+    }
 
     const dailyData = data.days.map((d) => ({
       date: new Date(`${d.date}T00:00:00`),
@@ -43,6 +51,7 @@ export default function DailyPlayTimeChart() {
     };
 
     const innerWidth = width - margin.left - margin.right;
+
     const innerHeight = height - margin.top - margin.bottom;
 
     const chart = svg
@@ -170,14 +179,15 @@ export default function DailyPlayTimeChart() {
       .on("mouseenter", function (_, d) {
         d3.select(this).transition().duration(150).attr("r", 7);
 
-        tooltip.style("opacity", 1).html(
-          `
-              <div>${d3.timeFormat("%b %d")(d.date)}</div>
+        tooltip.style("opacity", 1).html(`
+              <div>
+                ${d3.timeFormat("%b %d")(d.date)}
+              </div>
+
               <div style="font-weight: 600;">
                 ${d.minutes} minutes
               </div>
-            `,
-        );
+            `);
       })
       .on("mousemove", function (event) {
         tooltip
@@ -194,6 +204,18 @@ export default function DailyPlayTimeChart() {
       tooltip.remove();
     };
   }, [data]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex h-[300px] items-center justify-center text-sm text-violet-300">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -214,6 +236,7 @@ export default function DailyPlayTimeChart() {
   return (
     <div className="w-full">
       <svg ref={svgRef} className="h-auto w-full" viewBox="0 0 700 300" />
+
       <p className="mt-1 text-center text-sm font-medium tracking-wide text-violet-400">
         Minutes per day
       </p>

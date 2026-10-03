@@ -1,17 +1,36 @@
-import { getSteamDashBoard } from "../apis/steam.api";
+import { useAuth } from "@clerk/react";
 import { useQuery } from "@tanstack/react-query";
+
+import { getSteamDashBoard } from "../apis/steam.api";
+
 import CurrentOrLastPlayGame from "./CurrentOrLastPlayedGame";
 import StatsCard from "./StatsCard";
+
 import PlaytimePieChart from "../charts/PlaytimePieChart";
-import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
 import DailyPlayTimeChart from "../charts/DailyPlayTimeChart";
+
 import MostPlayedCard from "./most-played/MostPlayedCard";
 
+import { ChartNoAxesColumn, Clock3, Gamepad2 } from "lucide-react";
+
 export default function SteamConnectedHome() {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "dashboard"],
-    queryFn: getSteamDashBoard,
+
+    queryFn: () => getSteamDashBoard(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
 
   if (isLoading) {
     return <div>Loading your gaming activity.</div>;
@@ -21,10 +40,14 @@ export default function SteamConnectedHome() {
     return <div>Failed to load dashboard: {error.message}</div>;
   }
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
-        {/* current or last played game */}
+        {/* Current or last played game */}
         <div className="mb-5">
           <CurrentOrLastPlayGame />
         </div>

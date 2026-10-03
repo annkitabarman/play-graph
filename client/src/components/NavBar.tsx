@@ -1,8 +1,13 @@
 import { useState } from "react";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
+
 import { RefreshCw } from "lucide-react";
-import { UserButton } from "@clerk/react";
+
+import { UserButton, useAuth } from "@clerk/react";
+
 import { Link } from "react-router-dom";
+
 import { formatDistanceToNow } from "date-fns";
 
 import { getLastSynced, syncSteam } from "../apis/steam.api";
@@ -12,15 +17,20 @@ import SideBar from "./SideBar";
 export default function NavBar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["steam", "last-synced"],
-    queryFn: getLastSynced,
+
+    queryFn: () => getLastSynced(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const syncMutation = useMutation({
-    mutationFn: syncSteam,
+    mutationFn: () => syncSteam(getToken, timezone),
   });
 
   const lastSyncedAt = data?.last_synced_at;
@@ -44,7 +54,7 @@ export default function NavBar() {
               onClick={() => setIsSidebarOpen(true)}
               aria-label="Open navigation"
               aria-expanded={isSidebarOpen}
-              className="group flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.035] text-gray-400 transition hover:border-violet-400/20 hover:bg-violet-500/10 hover:text-violet-200 hover:cursor-pointer"
+              className="group flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.035] text-gray-400 transition hover:cursor-pointer hover:border-violet-400/20 hover:bg-violet-500/10 hover:text-violet-200"
             >
               <div className="flex w-[17px] flex-col gap-[4px]">
                 <span className="h-[1.5px] w-full rounded-full bg-current" />
@@ -67,7 +77,7 @@ export default function NavBar() {
             {/* Sync Steam */}
             <div className="group relative">
               <button
-                onClick={() => syncMutation.mutate(timezone)}
+                onClick={() => syncMutation.mutate()}
                 disabled={syncMutation.isPending}
                 className="flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium transition hover:cursor-pointer hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
