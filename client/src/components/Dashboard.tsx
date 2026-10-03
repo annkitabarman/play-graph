@@ -33,9 +33,14 @@ function SteamContent() {
     const syncSteam = async () => {
       try {
         setSyncing(true);
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const response = await fetch(`${BACKEND_URL}/steam/sync`, {
           method: "POST",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ timezone }),
         });
 
         if (!response.ok) throw new Error("Failed to sync Steam");

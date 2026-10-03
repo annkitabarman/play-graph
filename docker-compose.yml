@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: playgraph
+      POSTGRES_PASSWORD: playgraph_password
+      POSTGRES_DB: playgraph
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    image: playgraph-backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://playgraph:playgraph_password@postgres:5432/playgraph
+      REDIS_URL: redis://redis:6379
+    depends_on:
+
+
+      - postgres
+      - redis
+  frontend:
+    image: playgraph-frontend
+    ports:
+     - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -2,7 +2,7 @@ import { Gamepad2, Library, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { getSteamProfileDetails } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
-import { STEAM_COMMUNITY_URL } from "../constants/urls";
+import { STEAM_COMMUNITY_URL } from "../assets/constants/urls";
 
 interface SideBarProps {
   isOpen: boolean;

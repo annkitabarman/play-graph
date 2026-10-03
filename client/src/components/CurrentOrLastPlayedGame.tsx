@@ -1,7 +1,7 @@
 import { getCurrentlyPlaying } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
 import { History } from "lucide-react";
-import { STEAM_URL } from "../constants/urls";
+import { STEAM_URL } from "../assets/constants/urls";
 export default function CurrentOrLastPlayGame() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "currently-playing"],
@@ -26,6 +26,26 @@ export default function CurrentOrLastPlayGame() {
       <div className="rounded-2xl border border-red-500/20 bg-[#121021] p-5">
         <p className="text-sm text-red-400">Failed to load current game</p>
         <p className="mt-1 text-xs text-white/40">{error.message}</p>
+      </div>
+    );
+  }
+
+  if (!data?.game) {
+    return (
+      <div className="relative overflow-hidden rounded-2xl border border-violet-500/20 bg-[#121021] p-5">
+        <div className="flex min-h-[190px] items-center justify-center">
+          <div className="text-center">
+            <History className="mx-auto h-8 w-8 text-violet-400/50" />
+
+            <p className="mt-3 text-sm font-medium text-white/70">
+              No recent games
+            </p>
+
+            <p className="mt-1 text-xs text-white/35">
+              Start playing a game to see your activity here.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -67,7 +87,7 @@ export default function CurrentOrLastPlayGame() {
             {/* Game name */}
             <div className="group/game relative mt-5 w-fit">
               <a
-                href={`${STEAM_URL}/${data.game.app_id}`}
+                href={`${STEAM_URL}/${data.game?.app_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-2xl font-bold tracking-tight text-white transition hover:text-cyan-300"

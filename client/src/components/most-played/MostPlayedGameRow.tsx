@@ -1,5 +1,5 @@
 import type { MostPlayedGame } from "../../types/steam.types";
-import { STEAM_URL } from "../../constants/urls";
+import { STEAM_URL } from "../../assets/constants/urls";
 
 interface Props {
   game: MostPlayedGame;
