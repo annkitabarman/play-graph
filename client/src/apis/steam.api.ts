@@ -1,9 +1,7 @@
 import { BACKEND_URL } from "../assets/constants/urls";
 
 export async function getSteamDashBoard() {
-  const response = await fetch(`${BACKEND_URL}/steam/dashboard`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/dashboard`);
 
   if (!response.ok) throw new Error("Failed to load dashboard.");
 
@@ -13,7 +11,6 @@ export async function getSteamDashBoard() {
 export async function syncSteam(timezone: string) {
   const response = await fetch(`${BACKEND_URL}/steam/sync`, {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -29,9 +26,7 @@ export async function syncSteam(timezone: string) {
 }
 
 export async function getCurrentlyPlaying() {
-  const response = await fetch(`${BACKEND_URL}/steam/currently-playing`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/currently-playing`);
 
   if (!response.ok) throw new Error("Failed to get currently playing game.");
 
@@ -39,9 +34,7 @@ export async function getCurrentlyPlaying() {
 }
 
 export async function getMostPlayedGames() {
-  const response = await fetch(`${BACKEND_URL}/steam/most-played`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/most-played`);
 
   if (!response.ok) throw new Error("Failed to get recently played games.");
 
@@ -49,27 +42,21 @@ export async function getMostPlayedGames() {
 }
 
 export async function getDailyPlayTime() {
-  const response = await fetch(`${BACKEND_URL}/steam/daily-play-time`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/daily-play-time`);
 
   if (!response.ok) throw new Error("Failed to get daily play time.");
   return response.json();
 }
 
 export async function getLastSynced() {
-  const response = await fetch(`${BACKEND_URL}/steam/last-synced`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/last-synced`);
 
   if (!response.ok) throw new Error("Failed to get last synced time.");
   return response.json();
 }
 
 export async function getSteamProfileDetails() {
-  const response = await fetch(`${BACKEND_URL}/steam/profile`, {
-    credentials: "include",
-  });
+  const response = await fetch(`${BACKEND_URL}/steam/profile`);
   if (!response.ok) throw new Error("Failed to get profile details.");
 
   return response.json();
