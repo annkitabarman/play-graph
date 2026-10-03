@@ -7,7 +7,11 @@ export function setGetToken(fn: () => Promise<string | null>) {
 }
 
 async function authFetch(url: string, options: RequestInit = {}) {
-  const token = getTokenFn ? await getTokenFn() : null;
+  if (!getTokenFn) {
+    throw new Error("Clerk authentication is not initialized.");
+  }
+
+  const token = await getTokenFn();
 
   const headers = new Headers(options.headers);
 

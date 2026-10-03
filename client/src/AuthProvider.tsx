@@ -1,5 +1,6 @@
 import { useAuth } from "@clerk/react";
 import { useEffect, type ReactNode } from "react";
+
 import { setGetToken } from "./apis/steam.api";
 
 interface AuthProviderProps {
@@ -7,11 +8,17 @@ interface AuthProviderProps {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
-    setGetToken(getToken);
-  }, [getToken]);
+    if (isLoaded && isSignedIn) {
+      setGetToken(getToken);
+    }
+  }, [isLoaded, isSignedIn, getToken]);
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return <>{children}</>;
 }

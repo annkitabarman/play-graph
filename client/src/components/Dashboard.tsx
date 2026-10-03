@@ -1,8 +1,7 @@
 import SteamNotConnected from "./SteamNotConnected";
 import { useState, useEffect } from "react";
 import SteamConnectedHome from "./SteamConnectedHome";
-import { BACKEND_URL } from "../assets/constants/urls";
-import { getSteamStatus } from "../apis/steam.api";
+import { getSteamStatus, syncSteam } from "../apis/steam.api";
 
 function SteamContent() {
   const [steamConnected, setSteamConnected] = useState<boolean | null>(null);
@@ -26,30 +25,21 @@ function SteamContent() {
   useEffect(() => {
     if (!steamConnected) return;
 
-    const syncSteam = async () => {
+    const sync = async () => {
       try {
         setSyncing(true);
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const response = await fetch(`${BACKEND_URL}/steam/sync`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ timezone }),
-        });
 
-        if (!response.ok) throw new Error("Failed to sync Steam");
-        const data = await response.json();
-        console.log(data);
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        await syncSteam(timezone);
       } catch (err) {
-        console.log("Steam syncing failed", err);
+        console.error("Steam syncing failed:", err);
       } finally {
         setSyncing(false);
       }
     };
 
-    syncSteam();
+    sync();
   }, [steamConnected]);
 
   if (steamConnected === null)
