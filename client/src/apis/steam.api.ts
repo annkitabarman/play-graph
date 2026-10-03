@@ -1,15 +1,38 @@
 import { BACKEND_URL } from "../assets/constants/urls";
 
-export async function getSteamDashBoard() {
-  const response = await fetch(`${BACKEND_URL}/steam/dashboard`);
+let getTokenFn: (() => Promise<string | null>) | null = null;
 
-  if (!response.ok) throw new Error("Failed to load dashboard.");
+export function setGetToken(fn: () => Promise<string | null>) {
+  getTokenFn = fn;
+}
+
+async function authFetch(url: string, options: RequestInit = {}) {
+  const token = getTokenFn ? await getTokenFn() : null;
+
+  const headers = new Headers(options.headers);
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+}
+
+export async function getSteamDashBoard() {
+  const response = await authFetch(`${BACKEND_URL}/steam/dashboard`);
+
+  if (!response.ok) {
+    throw new Error("Failed to load dashboard.");
+  }
 
   return response.json();
 }
 
 export async function syncSteam(timezone: string) {
-  const response = await fetch(`${BACKEND_URL}/steam/sync`, {
+  const response = await authFetch(`${BACKEND_URL}/steam/sync`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -26,38 +49,51 @@ export async function syncSteam(timezone: string) {
 }
 
 export async function getCurrentlyPlaying() {
-  const response = await fetch(`${BACKEND_URL}/steam/currently-playing`);
+  const response = await authFetch(`${BACKEND_URL}/steam/currently-playing`);
 
-  if (!response.ok) throw new Error("Failed to get currently playing game.");
+  if (!response.ok) {
+    throw new Error("Failed to get currently playing game.");
+  }
 
   return response.json();
 }
 
 export async function getMostPlayedGames() {
-  const response = await fetch(`${BACKEND_URL}/steam/most-played`);
+  const response = await authFetch(`${BACKEND_URL}/steam/most-played`);
 
-  if (!response.ok) throw new Error("Failed to get recently played games.");
+  if (!response.ok) {
+    throw new Error("Failed to get recently played games.");
+  }
 
   return response.json();
 }
 
 export async function getDailyPlayTime() {
-  const response = await fetch(`${BACKEND_URL}/steam/daily-play-time`);
+  const response = await authFetch(`${BACKEND_URL}/steam/daily-play-time`);
 
-  if (!response.ok) throw new Error("Failed to get daily play time.");
+  if (!response.ok) {
+    throw new Error("Failed to get daily play time.");
+  }
+
   return response.json();
 }
 
 export async function getLastSynced() {
-  const response = await fetch(`${BACKEND_URL}/steam/last-synced`);
+  const response = await authFetch(`${BACKEND_URL}/steam/last-synced`);
 
-  if (!response.ok) throw new Error("Failed to get last synced time.");
+  if (!response.ok) {
+    throw new Error("Failed to get last synced time.");
+  }
+
   return response.json();
 }
 
 export async function getSteamProfileDetails() {
-  const response = await fetch(`${BACKEND_URL}/steam/profile`);
-  if (!response.ok) throw new Error("Failed to get profile details.");
+  const response = await authFetch(`${BACKEND_URL}/steam/profile`);
+
+  if (!response.ok) {
+    throw new Error("Failed to get profile details.");
+  }
 
   return response.json();
 }
