@@ -1,6 +1,8 @@
 import { connectSteam } from "../apis/steam.api";
+import { useAuth } from "@clerk/react";
 
 export default function SteamNotConnected() {
+  const { getToken } = useAuth();
   return (
     <main className="relative z-10 mx-auto w-full max-w-[1400px] px-6 py-6 md:px-10 lg:px-16 md:py-8">
       {/* Welcome */}
@@ -72,7 +74,7 @@ export default function SteamNotConnected() {
                            hover:to-pink-500/20
                            hover:shadow-[0_12px_35px_rgba(236,72,153,0.15)]
                            hover:cursor-pointer"
-              onClick={connectSteam}
+              onClick={() => connectSteam(getToken)}
             >
               <span className="text-base">🎮</span>
               Connect Steam

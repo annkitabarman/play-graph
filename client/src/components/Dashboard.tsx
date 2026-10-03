@@ -1,4 +1,5 @@
 import SteamNotConnected from "./SteamNotConnected";
+import { useAuth } from "@clerk/react";
 import { useState, useEffect } from "react";
 import SteamConnectedHome from "./SteamConnectedHome";
 import { getSteamStatus, syncSteam } from "../apis/steam.api";
@@ -6,11 +7,12 @@ import { getSteamStatus, syncSteam } from "../apis/steam.api";
 function SteamContent() {
   const [steamConnected, setSteamConnected] = useState<boolean | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        const response = await getSteamStatus();
+        const response = await getSteamStatus(getToken);
 
         setSteamConnected(response.connected);
       } catch (err) {
@@ -20,7 +22,7 @@ function SteamContent() {
     };
 
     checkConnection();
-  }, []);
+  }, [getToken]);
 
   useEffect(() => {
     if (!steamConnected) return;
@@ -31,7 +33,7 @@ function SteamContent() {
 
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        await syncSteam(timezone);
+        await syncSteam(getToken, timezone);
       } catch (err) {
         console.error("Steam syncing failed:", err);
       } finally {
@@ -40,7 +42,7 @@ function SteamContent() {
     };
 
     sync();
-  }, [steamConnected]);
+  }, [steamConnected, getToken]);
 
   if (steamConnected === null)
     return <div>Checking your Steam connection...</div>;

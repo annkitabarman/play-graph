@@ -1,17 +1,13 @@
 import { BACKEND_URL } from "../assets/constants/urls";
 
-let getTokenFn: (() => Promise<string | null>) | null = null;
+type GetToken = () => Promise<string | null>;
 
-export function setGetToken(fn: () => Promise<string | null>) {
-  getTokenFn = fn;
-}
-
-async function authFetch(url: string, options: RequestInit = {}) {
-  if (!getTokenFn) {
-    throw new Error("Clerk authentication is not initialized.");
-  }
-
-  const token = await getTokenFn();
+async function authFetch(
+  url: string,
+  getToken: GetToken,
+  options: RequestInit = {},
+) {
+  const token = await getToken();
 
   const headers = new Headers(options.headers);
 
@@ -26,8 +22,8 @@ async function authFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-export async function connectSteam() {
-  const response = await authFetch(`${BACKEND_URL}/steam/connect`);
+export async function connectSteam(getToken: GetToken) {
+  const response = await authFetch(`${BACKEND_URL}/steam/connect`, getToken);
 
   if (!response.ok) {
     const data = await response.json();
@@ -40,8 +36,8 @@ export async function connectSteam() {
   window.location.href = data.url;
 }
 
-export async function getSteamDashBoard() {
-  const response = await authFetch(`${BACKEND_URL}/steam/dashboard`);
+export async function getSteamDashBoard(getToken: GetToken) {
+  const response = await authFetch(`${BACKEND_URL}/steam/dashboard`, getToken);
 
   if (!response.ok) {
     throw new Error("Failed to load dashboard.");
@@ -50,8 +46,8 @@ export async function getSteamDashBoard() {
   return response.json();
 }
 
-export async function syncSteam(timezone: string) {
-  const response = await authFetch(`${BACKEND_URL}/steam/sync`, {
+export async function syncSteam(getToken: GetToken, timezone: string) {
+  const response = await authFetch(`${BACKEND_URL}/steam/sync`, getToken, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,14 +57,18 @@ export async function syncSteam(timezone: string) {
 
   if (!response.ok) {
     const data = await response.json();
-    throw new Error(data.message || "Failed to sync Steam");
+
+    throw new Error(data.message || "Failed to sync Steam.");
   }
 
   return response.json();
 }
 
-export async function getCurrentlyPlaying() {
-  const response = await authFetch(`${BACKEND_URL}/steam/currently-playing`);
+export async function getCurrentlyPlaying(getToken: GetToken) {
+  const response = await authFetch(
+    `${BACKEND_URL}/steam/currently-playing`,
+    getToken,
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get currently playing game.");
@@ -77,8 +77,11 @@ export async function getCurrentlyPlaying() {
   return response.json();
 }
 
-export async function getMostPlayedGames() {
-  const response = await authFetch(`${BACKEND_URL}/steam/most-played`);
+export async function getMostPlayedGames(getToken: GetToken) {
+  const response = await authFetch(
+    `${BACKEND_URL}/steam/most-played`,
+    getToken,
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get recently played games.");
@@ -87,8 +90,11 @@ export async function getMostPlayedGames() {
   return response.json();
 }
 
-export async function getDailyPlayTime() {
-  const response = await authFetch(`${BACKEND_URL}/steam/daily-play-time`);
+export async function getDailyPlayTime(getToken: GetToken) {
+  const response = await authFetch(
+    `${BACKEND_URL}/steam/daily-play-time`,
+    getToken,
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get daily play time.");
@@ -97,8 +103,11 @@ export async function getDailyPlayTime() {
   return response.json();
 }
 
-export async function getLastSynced() {
-  const response = await authFetch(`${BACKEND_URL}/steam/last-synced`);
+export async function getLastSynced(getToken: GetToken) {
+  const response = await authFetch(
+    `${BACKEND_URL}/steam/last-synced`,
+    getToken,
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get last synced time.");
@@ -107,8 +116,8 @@ export async function getLastSynced() {
   return response.json();
 }
 
-export async function getSteamProfileDetails() {
-  const response = await authFetch(`${BACKEND_URL}/steam/profile`);
+export async function getSteamProfileDetails(getToken: GetToken) {
+  const response = await authFetch(`${BACKEND_URL}/steam/profile`, getToken);
 
   if (!response.ok) {
     const data = await response.json();
@@ -125,8 +134,8 @@ export async function getSteamProfileDetails() {
   return response.json();
 }
 
-export async function getSteamStatus() {
-  const response = await authFetch(`${BACKEND_URL}/steam/status`);
+export async function getSteamStatus(getToken: GetToken) {
+  const response = await authFetch(`${BACKEND_URL}/steam/status`, getToken);
 
   if (!response.ok) {
     const data = await response.json();

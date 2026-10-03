@@ -1,10 +1,11 @@
 import { Gamepad2, Library, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@clerk/react";
 
-import { getSteamProfileDetails } from "../apis/steam.api";
+import { getSteamProfileDetails, connectSteam } from "../apis/steam.api";
+
 import { STEAM_COMMUNITY_URL } from "../assets/constants/urls";
-import { connectSteam } from "../apis/steam.api";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -14,15 +15,29 @@ interface SideBarProps {
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
   const location = useLocation();
 
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "profile"],
-    queryFn: getSteamProfileDetails,
+
+    queryFn: () => getSteamProfileDetails(getToken),
+
+    enabled: isLoaded && isSignedIn,
   });
 
   const errorStatus = (error as Error & { status?: number })?.status;
 
   const isDashboardActive = location.pathname === "/";
+
   const isLibraryActive = location.pathname === "/library";
+
+  const handleConnectSteam = async () => {
+    try {
+      await connectSteam(getToken);
+    } catch (error) {
+      console.error("Failed to connect Steam:", error);
+    }
+  };
 
   return (
     <>
@@ -138,8 +153,8 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
               </p>
 
               <button
-                onClick={connectSteam}
-                className="mt-2 text-xs font-medium text-violet-400 transition hover:text-violet-300 hover:cursor-pointer"
+                onClick={handleConnectSteam}
+                className="mt-2 text-xs font-medium text-violet-400 transition hover:cursor-pointer hover:text-violet-300"
               >
                 Connect Steam →
               </button>
