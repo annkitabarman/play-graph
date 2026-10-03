@@ -120,3 +120,15 @@ export async function getSteamProfileDetails() {
 
   return response.json();
 }
+
+export async function getSteamStatus() {
+  const response = await authFetch(`${BACKEND_URL}/steam/status`);
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    throw new Error(data.message || "Failed to check Steam connection.");
+  }
+
+  return response.json();
+}

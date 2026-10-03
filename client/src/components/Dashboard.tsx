@@ -2,6 +2,7 @@ import SteamNotConnected from "./SteamNotConnected";
 import { useState, useEffect } from "react";
 import SteamConnectedHome from "./SteamConnectedHome";
 import { BACKEND_URL } from "../assets/constants/urls";
+import { getSteamStatus } from "../apis/steam.api";
 
 function SteamContent() {
   const [steamConnected, setSteamConnected] = useState<boolean | null>(null);
@@ -10,15 +11,9 @@ function SteamContent() {
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/steam/status`, {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to check Steam connection");
-        }
+        const response = await getSteamStatus();
 
-        const data = await response.json();
-        setSteamConnected(data.connected);
+        setSteamConnected(response.connected);
       } catch (err) {
         setSteamConnected(false);
         console.log(err);
