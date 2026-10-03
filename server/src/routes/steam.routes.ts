@@ -11,9 +11,8 @@ import redis from "../lib/redis";
 import { ensureUser } from "../middleware/add-user";
 
 const router = Router();
-router.use(ensureUser);
 
-router.get("/connect", (req, res) => {
+router.get("/connect", ensureUser, (req, res) => {
   const { userId } = getAuth(req);
 
   if (!userId) {
@@ -145,7 +144,7 @@ router.get("/callback", async (req, res) => {
   }
 });
 
-router.get("/status", async (req, res) => {
+router.get("/status", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -180,7 +179,7 @@ router.get("/status", async (req, res) => {
   }
 });
 
-router.post("/sync", async (req, res) => {
+router.post("/sync", ensureUser, async (req, res) => {
   try {
     const { timezone } = req.body ?? {};
     if (!timezone) {
@@ -248,7 +247,7 @@ router.post("/sync", async (req, res) => {
   }
 });
 
-router.get("/dashboard", async (req, res) => {
+router.get("/dashboard", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
 
@@ -357,7 +356,7 @@ router.get("/dashboard", async (req, res) => {
   }
 });
 
-router.get("/currently-playing", async (req, res) => {
+router.get("/currently-playing", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
 
@@ -421,7 +420,7 @@ router.get("/currently-playing", async (req, res) => {
   }
 });
 
-router.get("/most-played", async (req, res) => {
+router.get("/most-played", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -473,7 +472,7 @@ router.get("/most-played", async (req, res) => {
   }
 });
 
-router.get("/daily-play-time", async (req, res) => {
+router.get("/daily-play-time", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
 
@@ -582,7 +581,7 @@ router.get("/daily-play-time", async (req, res) => {
   }
 });
 
-router.get("/last-synced", async (req, res) => {
+router.get("/last-synced", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -616,7 +615,7 @@ router.get("/last-synced", async (req, res) => {
   }
 });
 
-router.get("/profile", async (req, res) => {
+router.get("/profile", ensureUser, async (req, res) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
