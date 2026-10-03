@@ -1,8 +1,9 @@
 import { Gamepad2, Library, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { getSteamProfileDetails } from "../apis/steam.api";
 import { useQuery } from "@tanstack/react-query";
-import { STEAM_COMMUNITY_URL } from "../assets/constants/urls";
+
+import { getSteamProfileDetails } from "../apis/steam.api";
+import { BACKEND_URL, STEAM_COMMUNITY_URL } from "../assets/constants/urls";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -11,13 +12,20 @@ interface SideBarProps {
 
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
   const location = useLocation();
-  const { data, isLoading, isError } = useQuery({
+
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["steam", "profile"],
     queryFn: getSteamProfileDetails,
   });
 
+  const errorStatus = (error as Error & { status?: number })?.status;
+
   const isDashboardActive = location.pathname === "/";
   const isLibraryActive = location.pathname === "/library";
+
+  const handleConnectSteam = () => {
+    window.location.href = `${BACKEND_URL}/steam/connect`;
+  };
 
   return (
     <>
@@ -44,7 +52,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
           <button
             onClick={onClose}
             aria-label="Close navigation"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.035] text-gray-400 transition hover:border-violet-400/20 hover:bg-violet-500/10 hover:text-violet-200 hover:cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.035] text-gray-400 transition hover:cursor-pointer hover:border-violet-400/20 hover:bg-violet-500/10 hover:text-violet-200"
           >
             <X size={18} />
           </button>
@@ -113,7 +121,8 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
             Steam Account
           </p>
 
-          {isLoading ? (
+          {/* Loading */}
+          {isLoading && (
             <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.025] p-3">
               <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-violet-500/20" />
 
@@ -122,11 +131,42 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
                 <div className="mt-2 h-2.5 w-32 animate-pulse rounded bg-white/5" />
               </div>
             </div>
-          ) : isError || !data ? (
-            <div className="rounded-xl border border-white/5 bg-white/[0.025] p-3 text-xs text-white/35">
-              Unable to load Steam profile
+          )}
+
+          {/* Steam not connected */}
+          {!isLoading && errorStatus === 404 && (
+            <div className="rounded-xl border border-white/5 bg-white/[0.025] p-3">
+              <p className="text-xs text-white/40">
+                Steam account not connected
+              </p>
+
+              <button
+                onClick={handleConnectSteam}
+                className="mt-2 text-xs font-medium text-violet-400 transition hover:text-violet-300"
+              >
+                Connect Steam →
+              </button>
             </div>
-          ) : (
+          )}
+
+          {/* Other API error */}
+          {!isLoading && isError && errorStatus !== 404 && (
+            <div className="rounded-xl border border-white/5 bg-white/[0.025] p-3">
+              <p className="text-xs text-white/35">
+                Unable to load Steam profile
+              </p>
+
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 text-xs font-medium text-violet-400 transition hover:text-violet-300"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {/* Steam profile */}
+          {!isLoading && !isError && data && (
             <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.025] p-3">
               {data.avatar_url ? (
                 <img

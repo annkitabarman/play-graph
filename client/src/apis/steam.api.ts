@@ -92,7 +92,15 @@ export async function getSteamProfileDetails() {
   const response = await authFetch(`${BACKEND_URL}/steam/profile`);
 
   if (!response.ok) {
-    throw new Error("Failed to get profile details.");
+    const data = await response.json();
+
+    const error = new Error(
+      data.message || "Failed to fetch profile details.",
+    ) as Error & { status?: number };
+
+    error.status = response.status;
+
+    throw error;
   }
 
   return response.json();

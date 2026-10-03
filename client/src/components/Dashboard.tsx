@@ -20,6 +20,7 @@ function SteamContent() {
         const data = await response.json();
         setSteamConnected(data.connected);
       } catch (err) {
+        setSteamConnected(false);
         console.log(err);
       }
     };
