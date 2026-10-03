@@ -17,10 +17,10 @@ async function authFetch(url: string, options: RequestInit = {}) {
 
   return fetch(url, {
     ...options,
+    credentials: "include",
     headers,
   });
 }
-
 export async function getSteamDashBoard() {
   const response = await authFetch(`${BACKEND_URL}/steam/dashboard`);
 
