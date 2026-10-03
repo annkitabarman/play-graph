@@ -1,18 +1,17 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import axios from "axios";
-import {
-  getRecentlyPlayedGames,
-  getSteamProfile,
-} from "../services/steam.service";
+import { getSteamProfile } from "../services/steam.service";
 import prisma from "../lib/prisma";
 import { syncSteamAccount } from "../services/steam-sync.service";
 import { updateCurrentlyPlaying } from "../services/currently-playing.service";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { addDays } from "date-fns";
 import redis from "../lib/redis";
+import { ensureUser } from "../middleware/add-user";
 
 const router = Router();
+router.use(ensureUser);
 
 router.get("/connect", (req, res) => {
   const { userId } = getAuth(req);
@@ -25,13 +24,15 @@ router.get("/connect", (req, res) => {
 
   req.session.clerkUserId = userId;
 
-  const returnUrl = "http://localhost:5000/api/steam/callback";
+  const returnUrl = `${process.env.BACKEND_URL}/api/steam/callback`;
+
+  const realm = `${process.env.BACKEND_URL}/`;
 
   const params = new URLSearchParams({
     "openid.ns": "http://specs.openid.net/auth/2.0",
     "openid.mode": "checkid_setup",
     "openid.return_to": returnUrl,
-    "openid.realm": "http://localhost:5000/",
+    "openid.realm": realm,
     "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
     "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
   });
@@ -111,7 +112,7 @@ router.get("/callback", async (req, res) => {
 
     const profile = await getSteamProfile(steamId);
 
-    const connectedAccount = await prisma.connectedAccount.upsert({
+    await prisma.connectedAccount.upsert({
       where: {
         platform_externalId: {
           platform: "steam",
@@ -133,7 +134,7 @@ router.get("/callback", async (req, res) => {
       },
     });
 
-    return res.redirect("http://localhost:5173");
+    return res.redirect(process.env.FRONTEND_URL!);
   } catch (error) {
     console.error("Steam verification failed:", error);
 
