@@ -21,6 +21,21 @@ async function authFetch(url: string, options: RequestInit = {}) {
     headers,
   });
 }
+
+export async function connectSteam() {
+  const response = await authFetch(`${BACKEND_URL}/steam/connect`);
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    throw new Error(data.message || "Failed to connect Steam.");
+  }
+
+  const data = await response.json();
+
+  window.location.href = data.url;
+}
+
 export async function getSteamDashBoard() {
   const response = await authFetch(`${BACKEND_URL}/steam/dashboard`);
 

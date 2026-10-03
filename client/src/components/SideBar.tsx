@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { getSteamProfileDetails } from "../apis/steam.api";
-import { BACKEND_URL, STEAM_COMMUNITY_URL } from "../assets/constants/urls";
+import { STEAM_COMMUNITY_URL } from "../assets/constants/urls";
+import { connectSteam } from "../apis/steam.api";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -22,10 +23,6 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
 
   const isDashboardActive = location.pathname === "/";
   const isLibraryActive = location.pathname === "/library";
-
-  const handleConnectSteam = () => {
-    window.location.href = `${BACKEND_URL}/steam/connect`;
-  };
 
   return (
     <>
@@ -141,8 +138,8 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
               </p>
 
               <button
-                onClick={handleConnectSteam}
-                className="mt-2 text-xs font-medium text-violet-400 transition hover:text-violet-300"
+                onClick={connectSteam}
+                className="mt-2 text-xs font-medium text-violet-400 transition hover:text-violet-300 hover:cursor-pointer"
               >
                 Connect Steam →
               </button>

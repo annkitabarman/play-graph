@@ -25,7 +25,6 @@ router.get("/connect", (req, res) => {
   req.session.clerkUserId = userId;
 
   const returnUrl = `${process.env.BACKEND_URL}/api/steam/callback`;
-
   const realm = `${process.env.BACKEND_URL}/`;
 
   const params = new URLSearchParams({
@@ -39,7 +38,9 @@ router.get("/connect", (req, res) => {
 
   const steamLoginUrl = `https://steamcommunity.com/openid/login?${params.toString()}`;
 
-  res.redirect(steamLoginUrl);
+  return res.json({
+    url: steamLoginUrl,
+  });
 });
 
 router.get("/callback", async (req, res) => {
